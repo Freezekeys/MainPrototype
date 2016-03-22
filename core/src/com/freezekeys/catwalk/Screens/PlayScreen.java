@@ -52,18 +52,18 @@ public class PlayScreen implements Screen{
         gamecam = new OrthographicCamera();
 
         /* create a FitViewport to maintain virtual aspect ratio  */
-        gamePort = new FitViewport(Catwalk.V_WIDTH/Catwalk.PPM,Catwalk.V_HEIGHT/Catwalk.PPM, gamecam);
+        gamePort = new FitViewport(Catwalk.V_WIDTH/Catwalk.PPM/2,Catwalk.V_HEIGHT/Catwalk.PPM/2, gamecam);
 
         /* create a game HUD for score and timer */
         hud = new Hud(game.batch);
 
         /* Load our map and setup a map renderer */
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("./level/testLevel.tmx");
+        map = mapLoader.load("./level/testLevelClosed.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1 / Catwalk.PPM);
 
         /* sets the initial position of a gamecam */
-        gamecam.position.set(gamePort.getWorldWidth() / 2 - 0.9f, gamePort.getWorldHeight() / 2, 0);
+        gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
         world = new World(new Vector2(0,-1/Catwalk.PPM),true);
         b2dr = new Box2DDebugRenderer();
@@ -91,6 +91,8 @@ public class PlayScreen implements Screen{
     /* Process input from player, hold down mouse, screen speeds up */
     public void handleInput(float dt){
 
+
+        /* Motion controls */
         if(Gdx.input.isKeyPressed(Input.Keys.UP) && player.b2body.getLinearVelocity().y <= 1)
             player.b2body.applyLinearImpulse(new Vector2(0, 0.5f), player.b2body.getWorldCenter(), true);
         else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.b2body.getLinearVelocity().y >= -1)
@@ -100,25 +102,33 @@ public class PlayScreen implements Screen{
         else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -1)
             player.b2body.applyLinearImpulse(new Vector2(-0.5f,0), player.b2body.getWorldCenter(), true);
 
-
+        /* If player is moving, play this shit */
         if(!player.b2body.getLinearVelocity().isZero()) Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
 
+
+        /* Auto slowing down */
         if(player.b2body.getLinearVelocity().x > 0)
             player.b2body.applyLinearImpulse(new Vector2(-0.1f,0),player.b2body.getWorldCenter(), true);
         else if(player.b2body.getLinearVelocity().x < 0)
             player.b2body.applyLinearImpulse(new Vector2(0.1f,0),player.b2body.getWorldCenter(), true);
-        if(player.b2body.getLinearVelocity().y < 0)
-            player.b2body.applyLinearImpulse(new Vector2(0f,0.1f),player.b2body.getWorldCenter(), true);
-        else if(player.b2body.getLinearVelocity().y > 0)
+        if(player.b2body.getLinearVelocity().y > 0)
             player.b2body.applyLinearImpulse(new Vector2(0,-0.1f),player.b2body.getWorldCenter(), true);
+        else if(player.b2body.getLinearVelocity().y < 0)
+            player.b2body.applyLinearImpulse(new Vector2(0,0.1f),player.b2body.getWorldCenter(), true);
 
+        //gamecam.position.y += 100/Catwalk.PPM * dt; //gamecam moves on its own
 
-        gamecam.position.y += 100/Catwalk.PPM * dt;
+        gamecam.position.y = player.getY(); //gamecam moves with player
 
-        player.setPosition(player.getX(),player.getY() + 100);
-        System.out.println(player.getY());
+        //player moves with camera
+        /*
+        if(player.b2body.getLinearVelocity().y <= 0.5f)
+            player.b2body.applyLinearImpulse(new Vector2(0f,0.5f),player.b2body.getWorldCenter(), true);
+        */
+
     }
 
+    /* Simple update method, each frame it executes everything below */
     public void update(float dt){
         handleInput(dt);
 
@@ -127,21 +137,20 @@ public class PlayScreen implements Screen{
 
         gamecam.update();
 
-
         renderer.setView(gamecam);
     }
 
-    //Main screen rendering method
+    /* Main screen rendering method */
     @Override
     public void render(float delta) {
         update(delta);
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1); //sets the background color too
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // render game map
         renderer.render();
 
-        // debug lines
+        // debug lines, will be removed for release
         b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
