@@ -61,7 +61,7 @@ public class PlayScreen implements Screen{
 
         /* Load our map and setup a map renderer */
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("level/testLevel.tmx");
+        map = mapLoader.load("level/testLevelClosed.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1 / Catwalk.PPM);
 
         /* sets the initial position of a gamecam */
@@ -109,21 +109,17 @@ public class PlayScreen implements Screen{
         /* If player is moving, play this shit */
         if(!player.b2body.getLinearVelocity().isZero()) Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
 
-        /* Gyro Control*/
-        float accY = Gdx.input.getAccelerometerY();
+                /* Gyro Control Portrait*/
+        float accX = Gdx.input.getAccelerometerX();
         float accZ = Gdx.input.getAccelerometerZ();
-        if(accY > 0.3f && player.b2body.getLinearVelocity().x <= 1)
-            player.b2body.applyLinearImpulse(new Vector2(0.75f, 0), player.b2body.getWorldCenter(), true);
-        else if(accY < -0.3f && player.b2body.getLinearVelocity().x >= -1)
-            player.b2body.applyLinearImpulse(new Vector2(-0.75f, 0), player.b2body.getWorldCenter(), true);
-
-
-        if(accZ < 4f && player.b2body.getLinearVelocity().y >= -1)
+        if(accX < -0.5f && player.b2body.getLinearVelocity().x <= 1)
+            player.b2body.applyLinearImpulse(new Vector2(1f, 0), player.b2body.getWorldCenter(), true);
+        else if(accX > 0.5f && player.b2body.getLinearVelocity().x >= -1)
+            player.b2body.applyLinearImpulse(new Vector2(-1f, 0), player.b2body.getWorldCenter(), true);
+        if(accZ < 3.5f && player.b2body.getLinearVelocity().y >= -1)
             player.b2body.applyLinearImpulse(new Vector2(0, -0.5f), player.b2body.getWorldCenter(), true);
-        else if( accZ > 6.5f && player.b2body.getLinearVelocity().y <= 1)
+        else if( accZ > 4.5f && player.b2body.getLinearVelocity().y <= 1)
             player.b2body.applyLinearImpulse(new Vector2(0, 0.5f), player.b2body.getWorldCenter(), true);
-
-
 
         /* Auto slowing down */
         if(player.b2body.getLinearVelocity().x > 0)
