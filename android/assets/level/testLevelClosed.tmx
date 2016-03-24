@@ -1,22 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="13" height="240" tilewidth="16" tileheight="16" nextobjectid="43">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="13" height="240" tilewidth="16" tileheight="16" nextobjectid="87">
  <tileset firstgid="1" name="tileset_1" tilewidth="16" tileheight="16" spacing="1" margin="1" tilecount="121" columns="11">
   <image source="../tileset_1.png" trans="ff00ff" width="188" height="188"/>
  </tileset>
  <tileset firstgid="122" name="walls_1" tilewidth="16" tileheight="16" spacing="1" margin="1" tilecount="35" columns="7">
   <image source="../walls_1.png" trans="ff00ff" width="120" height="86"/>
  </tileset>
+ <tileset firstgid="157" name="powerups" tilewidth="16" tileheight="16" tilecount="8" columns="4">
+  <image source="../powerups.png" trans="ffffff" width="64" height="47"/>
+ </tileset>
  <layer name="background" width="13" height="240">
   <data encoding="base64" compression="zlib">
-   eJzt1bkNwCAMAEAGYb3MkrWjtEjBgsZyuOIahMFgnt5a6wAAAAAAUMQ9yM4nyjXKv8I6/mJn38c+s5ivcXfqG82z2j6TXReATJXfxMq5n8b/C+dy/6nIuQUAVlyL3pgHN9pwJA==
+   eJzt1ckNgCAUBUAKoT1rsRELNV5JhICJ+GUOcyEsjz2nlDIAAAAAAASxF2bnaWVt5Y8wj78YWfeyTq3NXb8j+9sap7e8Zva+AMwU+U2MnH01/l9Yl/tPRM4tADxzfCDDm7ZOV5sT0vpwrA==
   </data>
  </layer>
  <layer name="graphics" width="13" height="240">
   <data encoding="base64" compression="zlib">
-   eJzt00FLAkEYh3ErEJPsJtW9D1B3b6nQJRK8VAcL2kt08aB9ff+CC8MwO/POorsbPAPPRefHOyNj0ctbxSEMBoPBYNowOQ6DwbRj5jXMAoPBYDAYDAaDwWAwGAwGg8FkmzN17nRhMFdqpT7Vl7o2mh+1VL8ZZqO26s9obtSt053BpBYGg8GcwjypqdPMYF7Ug3pUl+rVaO7VRPXVh8G8HWYMvBkxU87qZ5r9rHfvXCmzdrKaqtVFM6xhxg2dDVNthpG9VWYc2XvMs2HaN+77sBr3fXTtPk2botdd81zDuLO6bEaRyjXyzCLwnb9CJjWjzDonZFL3Sc2puktsjr8nNif0uzY9x/3MOidkmnqj3xn9h/8cJm/t9+8AMU4TeA==
+   eJzt2kFLAkEYxvHJQNS0m1nHwA+gdu1WCl1EwUt1KMGlKC8dqu/RJ+5Z3MFhmJ15Z9HdPTwDfwSdH++O7EEWExW3kiwaGhoaGpoqTIyjoaGpxswKmCUNDQ0NDQ0NDQ0NDQ0NDQ0NDQ1NtDlBDaNTgemiF/SK1uhcaD7QCm0jzDf6Qb9CM0CXRlcCE1o0NDQ0xzB36N5oKjBzNEJj1EYLoRmiW9REzwLzmM1oWTN8Rs9qRpp01pN1XSHzZSQ1eauOplPA9Eu6Npp80/HszTN9z95DXhtN9ca8P6TGvD/qdp6yTaLqax4KGHNWnU3Pk149yywdn9nLZUIzdNI5LhM6T2hO3ll8c+w9vjmu77XsOeZ70jkuc8h79M9jNoIa2avrPOnv73e1+4+S675wmQl6QzcRJtQxzVkBc6H2z3yk5lrtnvl8Rp5HP/PRJmal+/8B29UZVQ==
   </data>
  </layer>
- <objectgroup name="powerup"/>
+ <layer name="usable" width="13" height="240">
+  <data encoding="base64" compression="zlib">
+   eJztzaENADAIAEH236EoBq2vIAiSmrsB/iMAAAAAAAAAAAAAAIBOLbbOYmsqPzxfF+nvAeA=
+  </data>
+ </layer>
+ <objectgroup name="powerup">
+  <object id="81" x="51" y="3764" width="9" height="8">
+   <ellipse/>
+  </object>
+  <object id="82" x="164.5" y="3731" width="7.75" height="9">
+   <ellipse/>
+  </object>
+  <object id="83" x="97.75" y="3796" width="12.5" height="9.25">
+   <ellipse/>
+  </object>
+ </objectgroup>
  <objectgroup name="walls">
   <object id="22" x="96.5" y="2878" width="47.5" height="16"/>
   <object id="23" x="161" y="2960.5" width="14" height="15"/>
@@ -37,10 +55,13 @@
   <object id="39" x="80" y="2640" width="79.5" height="15.5"/>
   <object id="40" x="32.5" y="2961" width="62.5" height="14.5"/>
   <object id="41" x="96.5" y="3168" width="79" height="15"/>
-  <object id="42" x="18" y="3679" width="175" height="16"/>
+  <object id="76" x="144.25" y="3791.75" width="15.25" height="15.75"/>
+  <object id="85" x="16.25" y="3680" width="144" height="15.5"/>
+  <object id="86" x="176.25" y="3680.5" width="15.75" height="15"/>
  </objectgroup>
  <objectgroup name="water">
   <object id="19" x="81.5" y="2368.5" width="43" height="40.5"/>
+  <object id="74" x="167.75" y="3783.75" width="24" height="29.5"/>
  </objectgroup>
  <objectgroup name="boundary">
   <object id="12" x="0" y="0.666667" width="16" height="3824"/>

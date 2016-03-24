@@ -15,17 +15,19 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.freezekeys.catwalk.Catwalk;
 import com.freezekeys.catwalk.Entities.Player;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Tools.B2WorldCreator;
+import com.freezekeys.catwalk.Tools.WorldContactListener;
 
 /**
  * Created by xrans on 3/6/2016.
  */
 public class PlayScreen implements Screen{
     private Catwalk game;
-    private FitViewport gamePort;
+    private StretchViewport gamePort;
     private OrthographicCamera gamecam;
     private Hud hud;
 
@@ -50,9 +52,9 @@ public class PlayScreen implements Screen{
 
         /* create cam used to scroll vertically */
         gamecam = new OrthographicCamera();
-
         /* create a FitViewport to maintain virtual aspect ratio  */
-        gamePort = new FitViewport(Catwalk.V_WIDTH/Catwalk.PPM/2,Catwalk.V_HEIGHT/Catwalk.PPM/2, gamecam);
+        gamePort = new StretchViewport(Catwalk.V_WIDTH/Catwalk.PPM,Catwalk.V_HEIGHT/Catwalk.PPM,
+                gamecam);
 
         /* create a game HUD for score and timer */
         hud = new Hud(game.batch);
@@ -63,7 +65,7 @@ public class PlayScreen implements Screen{
         renderer = new OrthogonalTiledMapRenderer(map, 1 / Catwalk.PPM);
 
         /* sets the initial position of a gamecam */
-        gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
+        gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight()/2, 0);
 
         world = new World(new Vector2(0,-1/Catwalk.PPM),true);
         b2dr = new Box2DDebugRenderer();
@@ -73,10 +75,13 @@ public class PlayScreen implements Screen{
         /* Music setup, sets the music file (that is already loaded) looping continously */
         music = Catwalk.manager.get("audio/music/catwalk_music.ogg", Music.class);
         music.setLooping(true);
-        music.play();
+        //music.play(); //Sets the music loop playing
 
         /* create world and player */
         new B2WorldCreator(world, map);
+
+        /* creates a collision detector */
+        world.setContactListener(new WorldContactListener());
     }
 
     public TextureAtlas getAtlas() {
@@ -90,7 +95,6 @@ public class PlayScreen implements Screen{
 
     /* Process input from player, hold down mouse, screen speeds up */
     public void handleInput(float dt){
-
 
         /* Motion controls */
         if(Gdx.input.isKeyPressed(Input.Keys.UP) && player.b2body.getLinearVelocity().y <= 1)
@@ -133,7 +137,8 @@ public class PlayScreen implements Screen{
 
         //gamecam.position.y += 100/Catwalk.PPM * dt; //gamecam moves on its own
 
-        gamecam.position.y = player.getY(); //gamecam moves with player
+        if(player.getY() > gamePort.getWorldHeight()/2)
+            gamecam.position.y = player.getY(); //gamecam moves with player
 
         //player moves with camera
         /*
@@ -180,7 +185,6 @@ public class PlayScreen implements Screen{
 
     @Override
     public void resize(int width, int height) {
-
         gamePort.update(width,height);
     }
 
