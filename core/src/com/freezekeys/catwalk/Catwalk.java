@@ -15,8 +15,8 @@ public class Catwalk extends Game {
 	public SpriteBatch batch;
 
 	/* Declaration of screen properties, from here they are used everywhere else */
-	public static final int V_WIDTH=400;
-	public static final int V_HEIGHT=208;
+	public static final int V_WIDTH=208;
+	public static final int V_HEIGHT=400;
 
 	/* Pixel per m resolution */
 	public static final float PPM = 100;
