@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.freezekeys.catwalk.Catwalk;
-import com.sun.scenario.Settings;
+import com.freezekeys.catwalk.Tools.Settings;
 
 
 
@@ -36,6 +36,7 @@ public class TitleMenuScreen implements Screen {
         mute = new Rectangle(0, 0, 40, 40);
         levelselection = new Rectangle((Catwalk.V_WIDTH / 2) -75, (Catwalk.V_HEIGHT / 2) -30, 150, 60);
         settings = new Rectangle((Catwalk.V_WIDTH / 2) -75, (Catwalk.V_HEIGHT / 2) -80, 150, 60);
+        mute = new Rectangle(0,0, 80, 60);
         touch = new Vector3();
         titleViewport = new StretchViewport(Catwalk.V_WIDTH/Catwalk.PPM,Catwalk.V_HEIGHT/Catwalk.PPM, menucam);
     }
@@ -56,22 +57,44 @@ public class TitleMenuScreen implements Screen {
         game.batch.end();
 
         game.batch.enableBlending();
+        if (Settings.musicEnabled || Settings.sfxEnabled){
+        game.batch.begin();
+        Texture speaker = new Texture("speakerwave.png");
+        game.batch.draw(speaker, 40, 0, 20, 52);
+        game.batch.end();}
     }
 
     public void update(){
         if (Gdx.input.justTouched()) {
             menucam.unproject(touch.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+            System.out.println("Touched");
 
             if (levelselection.contains(touch.x, touch.y)) {
-                game.setScreen(new PlayScreen(game));
+                game.setScreen(new SelectScreen(game));
                 return;
             }
+            if (settings.contains(touch.x, touch.y)) {
+                System.out.println("ToSettings");
+                game.setScreen(new SettingsScreen(game));
+                return;
+            }
+
+            if (mute.contains(touch.x, touch.y)){
+                if (Settings.muted)
+                {
+                    Settings.musicEnabled = true;
+                    Settings.sfxEnabled = true;
+                    Settings.muted = false;
+                }
+                else
+                {
+                    Settings.musicEnabled = false;
+                    Settings.sfxEnabled = false;
+                    Settings.muted = true;
+                }
+            }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S))
-        {
-            game.setScreen(new PlayScreen(game));
-            return;
-        }
+
     }
     @Override
     public void show() {

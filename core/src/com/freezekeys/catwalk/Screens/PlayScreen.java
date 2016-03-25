@@ -20,6 +20,7 @@ import com.freezekeys.catwalk.Catwalk;
 import com.freezekeys.catwalk.Entities.Player;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Tools.B2WorldCreator;
+import com.freezekeys.catwalk.Tools.Settings;
 import com.freezekeys.catwalk.Tools.WorldContactListener;
 
 /**
@@ -44,7 +45,7 @@ public class PlayScreen implements Screen{
     private TextureAtlas atlas;
 
 
-    public PlayScreen(Catwalk game){
+    public PlayScreen(Catwalk game, int level){
         atlas = new TextureAtlas("bat.pack");
 
         /* create main instance of the game */
@@ -61,7 +62,14 @@ public class PlayScreen implements Screen{
 
         /* Load our map and setup a map renderer */
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("level/testLevelClosed.tmx");
+        switch(level) {
+            case 1: map = map = mapLoader.load("level/testLevelClosed.tmx"); break;
+            case 2: break;
+            case 3: break;
+            case 4: break;
+            default: System.out.println("Error when choosing level"); break;
+        }
+
         renderer = new OrthogonalTiledMapRenderer(map, 1 / Catwalk.PPM);
 
         /* sets the initial position of a gamecam */
@@ -73,9 +81,11 @@ public class PlayScreen implements Screen{
         player = new Player(world,this);
 
         /* Music setup, sets the music file (that is already loaded) looping continously */
-        music = Catwalk.manager.get("audio/music/catwalk_music.ogg", Music.class);
-        music.setLooping(true);
-        //music.play(); //Sets the music loop playing
+        if ( Settings.musicEnabled) {
+            music = Catwalk.manager.get("audio/music/catwalk_music.ogg", Music.class);
+            music.setLooping(true);
+            //music.play(); //Sets the music loop playing
+        }
 
         /* create world and player */
         new B2WorldCreator(world, map);
@@ -107,7 +117,7 @@ public class PlayScreen implements Screen{
             player.b2body.applyLinearImpulse(new Vector2(-0.5f,0), player.b2body.getWorldCenter(), true);
 
         /* If player is moving, play this shit */
-        if(!player.b2body.getLinearVelocity().isZero()) Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
+        if(!player.b2body.getLinearVelocity().isZero() && Settings.sfxEnabled) Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
 
                 /* Gyro Control Portrait*/
         float accX = Gdx.input.getAccelerometerX();
