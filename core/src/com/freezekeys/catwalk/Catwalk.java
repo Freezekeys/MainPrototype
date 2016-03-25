@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.freezekeys.catwalk.Screens.PlayScreen;
+import com.freezekeys.catwalk.Screens.TitleMenuScreen;
 
 public class Catwalk extends Game {
 	public SpriteBatch batch;
@@ -32,7 +33,7 @@ public class Catwalk extends Game {
 		manager.load("audio/sound/catwalk_run.ogg", Sound.class);
 		manager.finishLoading(); //Can be done asynchronous
 
-		setScreen(new PlayScreen(this));
+		setScreen(new TitleMenuScreen(this));
 	}
 
 	@Override

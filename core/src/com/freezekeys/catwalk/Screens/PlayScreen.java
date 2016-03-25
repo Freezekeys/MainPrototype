@@ -112,9 +112,9 @@ public class PlayScreen implements Screen{
                 /* Gyro Control Portrait*/
         float accX = Gdx.input.getAccelerometerX();
         float accZ = Gdx.input.getAccelerometerZ();
-        if(accX < -0.5f && player.b2body.getLinearVelocity().x <= 1)
+        if(accX < -0.3f && player.b2body.getLinearVelocity().x <= 1)
             player.b2body.applyLinearImpulse(new Vector2(1f, 0), player.b2body.getWorldCenter(), true);
-        else if(accX > 0.5f && player.b2body.getLinearVelocity().x >= -1)
+        else if(accX > 0.3f && player.b2body.getLinearVelocity().x >= -1)
             player.b2body.applyLinearImpulse(new Vector2(-1f, 0), player.b2body.getWorldCenter(), true);
         if(accZ < 3.5f && player.b2body.getLinearVelocity().y >= -1)
             player.b2body.applyLinearImpulse(new Vector2(0, -0.5f), player.b2body.getWorldCenter(), true);
