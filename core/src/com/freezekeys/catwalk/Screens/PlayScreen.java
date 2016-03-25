@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.freezekeys.catwalk.Catwalk;
+import com.freezekeys.catwalk.Entities.Dog;
 import com.freezekeys.catwalk.Entities.Player;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Tools.B2WorldCreator;
@@ -40,13 +41,16 @@ public class PlayScreen implements Screen{
     private Box2DDebugRenderer b2dr;
 
     private Player player;
+    private Dog dog;
 
     private Music music;
     private TextureAtlas atlas;
 
+    private B2WorldCreator creator;
 
-    public PlayScreen(Catwalk game, int level){
-        atlas = new TextureAtlas("bat.pack");
+
+    public PlayScreen(Catwalk game){
+        atlas = new TextureAtlas("catdog.atlas");
 
         /* create main instance of the game */
         this.game = game;
@@ -70,6 +74,7 @@ public class PlayScreen implements Screen{
             default: System.out.println("Error when choosing level"); break;
         }
 
+        map = mapLoader.load("./level/testLevelClosed.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1 / Catwalk.PPM);
 
         /* sets the initial position of a gamecam */
@@ -78,7 +83,8 @@ public class PlayScreen implements Screen{
         world = new World(new Vector2(0,-1/Catwalk.PPM),true);
         b2dr = new Box2DDebugRenderer();
 
-        player = new Player(world,this);
+        /* create world and player */
+        creator = new B2WorldCreator(this);
 
         /* Music setup, sets the music file (that is already loaded) looping continously */
         if ( Settings.musicEnabled) {
@@ -87,8 +93,9 @@ public class PlayScreen implements Screen{
             //music.play(); //Sets the music loop playing
         }
 
-        /* create world and player */
-        new B2WorldCreator(world, map);
+        player = new Player(this);
+        dog = new Dog(this, .32f, .32f);
+
 
         /* creates a collision detector */
         world.setContactListener(new WorldContactListener());
@@ -103,8 +110,10 @@ public class PlayScreen implements Screen{
 
     }
 
-    /* Process input from player, hold down mouse, screen speeds up */
+    private float speed = 0.3f;
+    /* Process input from player */
     public void handleInput(float dt){
+        float realspeed = speed + Hud.playerSpeed*2;
 
         /* Motion controls */
         if(Gdx.input.isKeyPressed(Input.Keys.UP) && player.b2body.getLinearVelocity().y <= 1)
@@ -140,18 +149,35 @@ public class PlayScreen implements Screen{
             player.b2body.applyLinearImpulse(new Vector2(0,-0.1f),player.b2body.getWorldCenter(), true);
         else if(player.b2body.getLinearVelocity().y < 0)
             player.b2body.applyLinearImpulse(new Vector2(0,0.1f),player.b2body.getWorldCenter(), true);
+        if(Gdx.input.isKeyPressed(Input.Keys.UP))
+            player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body
+                    .getWorldCenter()
+                    , true);
+        else if(Gdx.input.isKeyPressed(Input.Keys.DOWN))
+            player.b2body.applyLinearImpulse(new Vector2(0, -realspeed), player.b2body
+                    .getWorldCenter
+                            (), true);
+
+         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+            player.b2body.applyLinearImpulse(new Vector2(realspeed, 0), player
+                    .b2body.getWorldCenter()
+                    , true);
+        else if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
+            player.b2body.applyLinearImpulse(new Vector2(-realspeed, 0), player.b2body
+                    .getWorldCenter()
+                    , true);
+
+        System.out.println(dt);
+
+        /* If player is moving, play this shit - need fix */
+        if(!player.b2body.getLinearVelocity().isZero() && dt%0.01f == 1){
+            Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
+        }
 
         //gamecam.position.y += 100/Catwalk.PPM * dt; //gamecam moves on its own
 
-        if(player.getY() > gamePort.getWorldHeight()/2)
+        if(player.getY() > gamePort.getWorldHeight()/2 && player.getY() < 36.2f)
             gamecam.position.y = player.getY(); //gamecam moves with player
-
-        //player moves with camera
-        /*
-        if(player.b2body.getLinearVelocity().y <= 0.5f)
-            player.b2body.applyLinearImpulse(new Vector2(0f,0.5f),player.b2body.getWorldCenter(), true);
-        */
-
     }
 
     /* Simple update method, each frame it executes everything below */
@@ -160,10 +186,12 @@ public class PlayScreen implements Screen{
 
         world.step(1 / 60f, 6, 2); //collision calculation precision, higher number - more precision.
         player.update(dt);
-
+        dog.update(dt);
+        hud.update(dt);
         gamecam.update();
 
         renderer.setView(gamecam);
+        player.b2body.setLinearVelocity(new Vector2(0,0));
     }
 
     /* Main screen rendering method */
@@ -177,11 +205,14 @@ public class PlayScreen implements Screen{
         renderer.render();
 
         // debug lines, will be removed for release
-        b2dr.render(world, gamecam.combined);
+        //b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
+
         player.draw(game.batch);
+        dog.draw(game.batch);
+
         game.batch.end();
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
@@ -207,6 +238,18 @@ public class PlayScreen implements Screen{
     @Override
     public void hide() {
 
+    }
+
+    public TiledMap getMap(){
+        return map;
+    }
+
+    public World getWorld(){
+        return world;
+    }
+
+    public B2WorldCreator getCreator(){
+        return creator;
     }
 
     @Override

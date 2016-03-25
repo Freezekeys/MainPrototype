@@ -1,6 +1,5 @@
 package com.freezekeys.catwalk.Entities;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -25,57 +24,54 @@ public class Player extends Sprite {
     public Body b2body;
     private TextureRegion catNormal;
 
-    public enum State {RUNNING, JUMPING, LEFT, RIGHT}
+    public enum State {RUNNING, LEFT, RIGHT}
 
     public State currentState;
     public State previousState;
     private Animation catRun;
-    private Animation catJump;
     private Animation catLeft;
-
-
+    private Animation catRight;
     private float stateTimer;
-    private int direction;
 
-    public Player(World world, PlayScreen screen) {
-        super(screen.getAtlas().findRegion("bat_32x32"));
-        this.world = world;
+    public Player(PlayScreen screen) {
+        super(screen.getAtlas().findRegion("cat"));
+        this.world = screen.getWorld();
 
         currentState = State.RUNNING;
         previousState = State.RUNNING;
         stateTimer = 0;
-        direction = 0;
 
         Array<TextureRegion> frames = new Array<TextureRegion>();
 
         /* Running */
         for (int i = 0; i < 3; i++)
-            frames.add(new TextureRegion(getTexture(), 32 + i * 32, 64, 32, 32));
+            frames.add(new TextureRegion(getTexture(),4*32+ i * 32, 3*32, 32, 32));
         catRun = new Animation(0.1f, frames);
         frames.clear();
 
         /* Left */
         for (int i = 0; i < 3; i++)
-            frames.add(new TextureRegion(getTexture(), 32 + i * 32, 96, 32, 32));
+            frames.add(new TextureRegion(getTexture(),4*32+ i * 32, 1*32, 32, 32));
         catLeft = new Animation(0.1f, frames);
         frames.clear();
 
-        /* Jump */
-        for (int i = 0; i < 1; i++)
-            frames.add(new TextureRegion(getTexture(), i * 32, 96, 32, 32));
-        catJump = new Animation(0.1f, frames);
+        /* Right */
+        for (int i = 0; i < 3; i++)
+            frames.add(new TextureRegion(getTexture(),4*32+ i * 32, 2*32, 32, 32));
+        catRight = new Animation(0.1f, frames);
         frames.clear();
 
-        definePlayer();
+        definePlayer(screen);
         catNormal = new TextureRegion(getTexture(), 66, 0, 32, 32);
         setBounds(0, 0, 32 / Catwalk.PPM, 32 / Catwalk.PPM);
         setRegion(catNormal);
     }
 
-    public void definePlayer() {
+    public void definePlayer(PlayScreen screen) {
         BodyDef bdef = new BodyDef();
 
-        bdef.position.set(32 / Catwalk.PPM, 32 / Catwalk.PPM);
+        bdef.position.set(screen.getCreator().getLevelStart().x / Catwalk.PPM,
+                screen.getCreator().getLevelStart().y / Catwalk.PPM);
         bdef.type = BodyDef.BodyType.DynamicBody;
         b2body = world.createBody(bdef);
 
@@ -83,49 +79,42 @@ public class Player extends Sprite {
         CircleShape shape = new CircleShape();
         shape.setRadius(5 / Catwalk.PPM);
 
-        fdef.shape = shape;
-        b2body.createFixture(fdef).setUserData("head");
+        fdef.filter.categoryBits = Catwalk.CAT_BIT;
+        fdef.filter.maskBits = Catwalk.GROUND_BIT | Catwalk.POWERUP_BIT | Catwalk.WALL_BIT | Catwalk.END_BIT;
 
-        // If we want special collision for head edge
+        fdef.shape = shape;
+
+        // Body collisions
+        b2body.createFixture(fdef).setUserData("body");
+
+        // Head collisions
         EdgeShape head = new EdgeShape();
         head.set(new Vector2(-2 / Catwalk.PPM, 7 / Catwalk.PPM), new Vector2(2 / Catwalk.PPM, 7 /
                 Catwalk.PPM));
         fdef.shape = head;
         fdef.isSensor = true;
 
-        //b2body.createFixture(fdef).setUserData("head");
-
+        b2body.createFixture(fdef).setUserData("head");
     }
 
     public void update(float dt) {
         setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
-
         setRegion(getFrame(dt));
     }
 
     public TextureRegion getFrame(float dt) {
         currentState = getState();
         TextureRegion region;
-        switch(currentState){
-            case LEFT: region =  catLeft.getKeyFrame(stateTimer);
+        switch(currentState) {
+            case LEFT:
+                region = catLeft.getKeyFrame(stateTimer,true);
                 break;
-            case RIGHT: region = catLeft.getKeyFrame(stateTimer);
+            case RIGHT:
+                region = catRight.getKeyFrame(stateTimer,true);
                 break;
-            default: region = catRun.getKeyFrame(stateTimer);
+            default:
+                region = catRun.getKeyFrame(stateTimer,true);
                 break;
-        }
-
-        /* Directions NEED some FIXING
-        * 0 = running forward
-        * 1 = running left
-        * 2 = running right
-        */
-        if(b2body.getLinearVelocity().x < 0 && !region.isFlipX()){
-            region.flip(true, false);
-            direction = 1;
-        }
-        else if(b2body.getLinearVelocity().y > 0 || direction == 0){
-            direction = 0;
         }
 
         stateTimer = currentState == previousState ? stateTimer + dt : 0;

@@ -1,13 +1,11 @@
 package com.freezekeys.catwalk.Entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
 import com.freezekeys.catwalk.Catwalk;
+import com.freezekeys.catwalk.Scenes.Hud;
+import com.freezekeys.catwalk.Screens.PlayScreen;
 
 
 /**
@@ -15,14 +13,23 @@ import com.freezekeys.catwalk.Catwalk;
  */
 public class Powerup extends Interactive{
 
-    public Powerup(World world, TiledMap map, Rectangle rect) {
-        super(world, map, rect);
-        fixture.setUserData(true);
+    public Powerup(PlayScreen screen, Rectangle rect) {
+        super(screen, rect);
+        fixture.setUserData(this);
+        setCategoryFilter(Catwalk.POWERUP_BIT);
     }
 
     @Override
     public void onHeadHit() {
-        Gdx.app.log("Power-Up","Collision");
 
+    }
+
+    @Override
+    public void onBodyHit() {
+        Gdx.app.log("Power-Up", "Collision");
+        Hud.changeSpeed(0.01f);
+        setCategoryFilter(Catwalk.DESTROYED_BIT);
+        getCell().setTile(null);
+        Catwalk.manager.get("audio/sound/catwalk_pickup.wav", Sound.class).play();
     }
 }

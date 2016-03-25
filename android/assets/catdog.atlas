@@ -1,0 +1,19 @@
+
+catdog.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+dog
+  rotate: false
+  xy: 0, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+cat
+  rotate: false
+  xy: 128, 0
+  size: 97, 128
+  orig: 97, 128
+  offset: 0, 0
+  index: -1
