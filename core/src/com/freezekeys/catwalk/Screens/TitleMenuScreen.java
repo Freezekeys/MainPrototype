@@ -57,6 +57,7 @@ public class TitleMenuScreen implements Screen {
         game.batch.end();
 
         game.batch.enableBlending();
+        Settings.loadPrefs();
         if (Settings.musicEnabled || Settings.sfxEnabled){
         game.batch.begin();
         Texture speaker = new Texture("speakerwave.png");
@@ -92,6 +93,8 @@ public class TitleMenuScreen implements Screen {
                     Settings.sfxEnabled = false;
                     Settings.muted = true;
                 }
+                Settings.savePrefs();
+                return;
             }
         }
 

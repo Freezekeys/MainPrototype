@@ -2,12 +2,15 @@ package com.freezekeys.catwalk.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.freezekeys.catwalk.Catwalk;
 import com.freezekeys.catwalk.Tools.Settings;
 
@@ -21,6 +24,8 @@ public class SelectScreen implements Screen {
     private OrthographicCamera selectcam;
     private StretchViewport selectViewport;
     private Vector3 touch;
+    BitmapFont font = new BitmapFont();
+    //private Label hs_one, hs_two, hs_three, hs_four;
 
     public SelectScreen (Catwalk game) {
         this.game = game;
@@ -28,6 +33,7 @@ public class SelectScreen implements Screen {
         selectcam.position.set(Catwalk.V_WIDTH / 2, Catwalk.V_HEIGHT / 2, 0);
         back = new Rectangle(10, Catwalk.V_HEIGHT - 70, 60, 60);
         one = new Rectangle((Catwalk.V_WIDTH /2) + 10, (Catwalk.V_HEIGHT /2) +30, 80, 80);
+        //hs_one = new Label(String.format("%03d",Settings.hs_one),new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         two = new Rectangle(10, (Catwalk.V_HEIGHT /2)-35, 80, 80);
         three = new Rectangle((Catwalk.V_WIDTH /2) + 10, (Catwalk.V_HEIGHT /2) -95, 80, 80);
         four = new Rectangle(10, (Catwalk.V_HEIGHT /2) -165, 80, 80);
@@ -42,6 +48,7 @@ public class SelectScreen implements Screen {
         gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         selectcam.update();
         game.batch.setProjectionMatrix(selectcam.combined);
+        Settings.loadPrefs();
 
         game.batch.disableBlending();
         game.batch.begin();
@@ -50,6 +57,10 @@ public class SelectScreen implements Screen {
         game.batch.end();
         game.batch.enableBlending();
         game.batch.begin();
+        font.draw(game.batch, String.format("Time: %03d s", Settings.hs_one), (Catwalk.V_WIDTH / 2) + 15, (Catwalk.V_HEIGHT / 2) + 30);
+        font.draw(game.batch, String.format("Time: %03d s", Settings.hs_two), 15, (Catwalk.V_HEIGHT /2)-35);
+        font.draw(game.batch, String.format("Time: %03d s", Settings.hs_three), (Catwalk.V_WIDTH /2) + 15, (Catwalk.V_HEIGHT /2) -95);
+        font.draw(game.batch, String.format("Time: %03d s", Settings.hs_four), 15, (Catwalk.V_HEIGHT /2) -165);
         game.batch.end();
 
 
@@ -70,16 +81,16 @@ public class SelectScreen implements Screen {
             }
             if (two.contains(touch.x, touch.y)){
                 System.out.println("hit2");
-                //game.setScreen(new PlayScreen(game, 1));
+                game.setScreen(new PlayScreen(game, 2));
                 return;
             }
             if (three.contains(touch.x, touch.y)){
-                //game.setScreen(new PlayScreen(game, 1));
+                game.setScreen(new PlayScreen(game, 3));
                 System.out.println("hit3");
                 return;
             }
             if (four.contains(touch.x, touch.y)){
-                //game.setScreen(new PlayScreen(game, 1));
+                game.setScreen(new PlayScreen(game, 4));
                 System.out.println("hit4");
                 return;
             }

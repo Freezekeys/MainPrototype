@@ -76,6 +76,10 @@ public class Hud implements Disposable{
         speedCount.setText(String.format("%03d", (int)(playerSpeed*100)));
     }
 
+    public Integer getWorldTimer()
+    {
+        return worldTimer;
+    }
     @Override
     public void dispose() {
         stage.dispose();

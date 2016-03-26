@@ -49,11 +49,14 @@ public class PlayScreen implements Screen{
     private B2WorldCreator creator;
 
 
-    public PlayScreen(Catwalk game){
+    public PlayScreen(Catwalk game, int level){
         atlas = new TextureAtlas("catdog.atlas");
 
         /* create main instance of the game */
         this.game = game;
+
+        /*Load Preferences*/
+        Settings.loadPrefs();
 
         /* create cam used to scroll vertically */
         gamecam = new OrthographicCamera();
@@ -67,14 +70,14 @@ public class PlayScreen implements Screen{
         /* Load our map and setup a map renderer */
         mapLoader = new TmxMapLoader();
         switch(level) {
-            case 1: map = map = mapLoader.load("level/testLevelClosed.tmx"); break;
-            case 2: break;
-            case 3: break;
-            case 4: break;
+            case 1: map = mapLoader.load("level/testLevelClosed.tmx"); break;
+            case 2: map = mapLoader.load("level/level2.tmx"); break;
+            case 3: map = mapLoader.load("level/level3.tmx"); break;
+            case 4: map = mapLoader.load("level/level4.tmx"); break;
             default: System.out.println("Error when choosing level"); break;
         }
 
-        map = mapLoader.load("./level/testLevelClosed.tmx");
+        //map = mapLoader.load("level/testLevelClosed.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1 / Catwalk.PPM);
 
         /* sets the initial position of a gamecam */
@@ -90,7 +93,7 @@ public class PlayScreen implements Screen{
         if ( Settings.musicEnabled) {
             music = Catwalk.manager.get("audio/music/catwalk_music.ogg", Music.class);
             music.setLooping(true);
-            //music.play(); //Sets the music loop playing
+            music.play(); //Sets the music loop playing
         }
 
         player = new Player(this);
@@ -126,7 +129,7 @@ public class PlayScreen implements Screen{
             player.b2body.applyLinearImpulse(new Vector2(-0.5f,0), player.b2body.getWorldCenter(), true);
 
         /* If player is moving, play this shit */
-        if(!player.b2body.getLinearVelocity().isZero() && Settings.sfxEnabled) Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
+        //if(!player.b2body.getLinearVelocity().isZero() && Settings.sfxEnabled) Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
 
                 /* Gyro Control Portrait*/
         float accX = Gdx.input.getAccelerometerX();
@@ -218,6 +221,24 @@ public class PlayScreen implements Screen{
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
 
         hud.stage.draw();
+    }
+
+    public void levelDone(int level)
+    {
+        int highscore = hud.getWorldTimer();
+        switch(level) {
+            case 1:
+                Settings.hs_one = highscore; break;
+            case 2:
+                Settings.hs_two = highscore; break;
+            case 3:
+                Settings.hs_three= highscore; break;
+            case 4:
+                Settings.hs_four= highscore; break;
+            default: System.out.println("Error when writing highscore"); break;
+        }
+        Settings.savePrefs();
+        game.setScreen(new TitleMenuScreen(game));
     }
 
     @Override

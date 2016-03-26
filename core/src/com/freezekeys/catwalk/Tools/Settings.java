@@ -1,117 +1,52 @@
 package com.freezekeys.catwalk.Tools;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
-import java.util.Map;
+
 
 /**
  * Created by Lucas on 25.03.2016.
  */
-public class Settings implements Preferences {
+public class Settings {
     public static boolean sfxEnabled = true, musicEnabled = true, muted = false;
+    public static int hs_one, hs_two, hs_three, hs_four;
+    public static Preferences saveData = Gdx.app.getPreferences("Catwalk_saveData");
 
-    @Override
-    public Preferences putBoolean(String key, boolean val) {
-        return null;
+
+
+    public static void savePrefs(){
+        saveData.putBoolean("sfx", sfxEnabled);
+        saveData.putBoolean("music", musicEnabled);
+        saveData.putBoolean("mute", muted);
+        saveData.putInteger("HS1", hs_one);
+        saveData.putInteger("HS2", hs_two);
+        saveData.putInteger("HS3", hs_three);
+        saveData.putInteger("HS4", hs_four);
+        saveData.flush();
     }
 
-    @Override
-    public Preferences putInteger(String key, int val) {
-        return null;
+    public static void loadPrefs(){
+        sfxEnabled = saveData.getBoolean("sfx");
+        musicEnabled = saveData.getBoolean("music");
+        muted = saveData.getBoolean("mute");
+        hs_one = saveData.getInteger("HS1");
+        hs_two = saveData.getInteger("HS2");
+        hs_three = saveData.getInteger("HS3");
+        hs_four = saveData.getInteger("HS4");
     }
 
-    @Override
-    public Preferences putLong(String key, long val) {
-        return null;
+    public static void wipeCache(){
+        sfxEnabled = true;
+        musicEnabled = true;
+        muted = false;
+        hs_four = 0;
+        hs_one = 0;
+        hs_three = 0;
+        hs_two = 0;
+        savePrefs();
     }
 
-    @Override
-    public Preferences putFloat(String key, float val) {
-        return null;
-    }
 
-    @Override
-    public Preferences putString(String key, String val) {
-        return null;
-    }
 
-    @Override
-    public Preferences put(Map<String, ?> vals) {
-        return null;
-    }
-
-    @Override
-    public boolean getBoolean(String key) {
-        return false;
-    }
-
-    @Override
-    public int getInteger(String key) {
-        return 0;
-    }
-
-    @Override
-    public long getLong(String key) {
-        return 0;
-    }
-
-    @Override
-    public float getFloat(String key) {
-        return 0;
-    }
-
-    @Override
-    public String getString(String key) {
-        return null;
-    }
-
-    @Override
-    public boolean getBoolean(String key, boolean defValue) {
-        return false;
-    }
-
-    @Override
-    public int getInteger(String key, int defValue) {
-        return 0;
-    }
-
-    @Override
-    public long getLong(String key, long defValue) {
-        return 0;
-    }
-
-    @Override
-    public float getFloat(String key, float defValue) {
-        return 0;
-    }
-
-    @Override
-    public String getString(String key, String defValue) {
-        return null;
-    }
-
-    @Override
-    public Map<String, ?> get() {
-        return null;
-    }
-
-    @Override
-    public boolean contains(String key) {
-        return false;
-    }
-
-    @Override
-    public void clear() {
-
-    }
-
-    @Override
-    public void remove(String key) {
-
-    }
-
-    @Override
-    public void flush() {
-
-    }
 }
