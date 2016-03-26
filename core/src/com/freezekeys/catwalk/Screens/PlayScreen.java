@@ -223,18 +223,23 @@ public class PlayScreen implements Screen{
         hud.stage.draw();
     }
 
-    public void levelDone(int level)
+    public void levelSuccess(int level)
     {
+        Settings.loadPrefs();
         int highscore = hud.getWorldTimer();
         switch(level) {
             case 1:
-                Settings.hs_one = highscore; break;
+                if (highscore < Settings.hs_one)
+                    Settings.hs_one = highscore; break;
             case 2:
-                Settings.hs_two = highscore; break;
+                if (highscore < Settings.hs_two)
+                    Settings.hs_two = highscore; break;
             case 3:
-                Settings.hs_three= highscore; break;
+                if (highscore < Settings.hs_three)
+                    Settings.hs_three= highscore; break;
             case 4:
-                Settings.hs_four= highscore; break;
+                if (highscore < Settings.hs_four)
+                    Settings.hs_four= highscore; break;
             default: System.out.println("Error when writing highscore"); break;
         }
         Settings.savePrefs();
