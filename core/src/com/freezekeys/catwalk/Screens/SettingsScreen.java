@@ -32,7 +32,7 @@ public class SettingsScreen implements Screen{
         sfx = new Rectangle((Catwalk.V_WIDTH / 2) -75, (Catwalk.V_HEIGHT / 2) -45 , 200, 60);
         music = new Rectangle((Catwalk.V_WIDTH / 2) -75, (Catwalk.V_HEIGHT / 2) +10, 200, 60);
         back = new Rectangle(10, Catwalk.V_HEIGHT - 70, 60, 60);
-        gamecache= new Rectangle(0,0, 200, 50);
+        gamecache= new Rectangle(0,0, 200, 80);
         touch = new Vector3();
         settingsViewport = new StretchViewport(Catwalk.V_WIDTH/Catwalk.PPM,Catwalk.V_HEIGHT/Catwalk.PPM, settingscam);
     }
