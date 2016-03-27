@@ -37,7 +37,7 @@ public class Catwalk extends Game {
 	public void create () {
 		batch = new SpriteBatch();
         createMusicAsset();
-		setScreen(new PlayScreen(this));
+		setScreen(new TitleMenuScreen(this));
 	}
 
 	public void createMusicAsset(){
@@ -54,9 +54,7 @@ public class Catwalk extends Game {
 		manager.finishLoading(); //Can be done asynchronous
 	}
 
-		setScreen(new TitleMenuScreen(this));
-<<<<<<< HEAD
-		setScreen(new PlayScreen(this));
+
 	public static Music getMusicForLevel(){
 		switch(new Random().nextInt(3)){
 			case 0:
@@ -69,8 +67,7 @@ public class Catwalk extends Game {
 				return manager.get("audio/music/catwalk_music4.mp3", Music.class);
 		}
 		return null;
-=======
->>>>>>> origin/ScreenPlayerControl
+
 	}
 
 	@Override

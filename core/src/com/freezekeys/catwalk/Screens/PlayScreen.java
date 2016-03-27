@@ -21,6 +21,7 @@ import com.freezekeys.catwalk.Entities.Dog;
 import com.freezekeys.catwalk.Entities.Player;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Tools.B2WorldCreator;
+import com.freezekeys.catwalk.Tools.Settings;
 import com.freezekeys.catwalk.Tools.WorldContactListener;
 
 /**
@@ -77,12 +78,9 @@ public class PlayScreen implements Screen{
             default: System.out.println("Error when choosing level"); break;
         }
 
-<<<<<<< HEAD
-        map = mapLoader.load("./level/testLevelClosed.tmx");
-        map = mapLoader.load("./level/level2.tmx");
-=======
+
         //map = mapLoader.load("level/testLevelClosed.tmx");
->>>>>>> origin/ScreenPlayerControl
+
         renderer = new OrthogonalTiledMapRenderer(map, 1 / Catwalk.PPM);
 
         /* sets the initial position of a gamecam */
@@ -124,8 +122,7 @@ public class PlayScreen implements Screen{
         float realspeed = speed + Hud.playerSpeed*2;
 
         /* Motion controls */
-<<<<<<< HEAD
-=======
+
         if(Gdx.input.isKeyPressed(Input.Keys.UP) && player.b2body.getLinearVelocity().y <= 1)
             player.b2body.applyLinearImpulse(new Vector2(0, 0.5f), player.b2body.getWorldCenter(), true);
         else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.b2body.getLinearVelocity().y >= -1)
@@ -159,11 +156,7 @@ public class PlayScreen implements Screen{
             player.b2body.applyLinearImpulse(new Vector2(0,-0.1f),player.b2body.getWorldCenter(), true);
         else if(player.b2body.getLinearVelocity().y < 0)
             player.b2body.applyLinearImpulse(new Vector2(0,0.1f),player.b2body.getWorldCenter(), true);
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/ScreenPlayerControl
->>>>>>> origin/ScreenPlayerControl
         if(Gdx.input.isKeyPressed(Input.Keys.UP))
             player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body
                     .getWorldCenter()
@@ -261,14 +254,14 @@ public class PlayScreen implements Screen{
 
     @Override
     public void resize(int width, int height) {
-        gamePort.update(width,height);
+        gamePort.update(width, height);
     }
 
     @Override
     public void pause() {
-
-    }
         gamePaused = true;
+    }
+
     @Override
     public void resume() {
 
