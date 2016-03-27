@@ -23,11 +23,13 @@ public abstract class Interactive {
     protected World world;
     protected TiledMap map;
     protected Body body;
+    protected PlayScreen screen;
 
 
     public Interactive(PlayScreen screen, Rectangle rect) {
         this.world = screen.getWorld();
         this.map = screen.getMap();
+        this.screen = screen;
 
         BodyDef bdef = new BodyDef();
         FixtureDef fdef = new FixtureDef();

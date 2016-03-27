@@ -48,11 +48,12 @@ public class PlayScreen implements Screen{
 
     private B2WorldCreator creator;
     private boolean gamePaused = false;
+    private int level;
 
 
     public PlayScreen(Catwalk game, int level){
         atlas = new TextureAtlas("catdog.atlas");
-
+        this.level = level;
         /* create main instance of the game */
         this.game = game;
 
@@ -116,26 +117,20 @@ public class PlayScreen implements Screen{
 
     }
 
+    public int getLevel() {
+        return level;
+    }
+
     private float speed = 0.3f;
     /* Process input from player */
     public void handleInput(float dt){
         float realspeed = speed + Hud.playerSpeed*2;
-
         /* Motion controls */
-
-        if(Gdx.input.isKeyPressed(Input.Keys.UP) && player.b2body.getLinearVelocity().y <= 1)
-            player.b2body.applyLinearImpulse(new Vector2(0, 0.5f), player.b2body.getWorldCenter(), true);
-        else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.b2body.getLinearVelocity().y >= -1)
-            player.b2body.applyLinearImpulse(new Vector2(0, -0.5f), player.b2body.getWorldCenter(), true);
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 1)
-            player.b2body.applyLinearImpulse(new Vector2(0.5f, 0), player.b2body.getWorldCenter(), true);
-        else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -1)
-            player.b2body.applyLinearImpulse(new Vector2(-0.5f,0), player.b2body.getWorldCenter(), true);
-
         /* If player is moving, play this shit */
         //if(!player.b2body.getLinearVelocity().isZero() && Settings.sfxEnabled) Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
 
                 /* Gyro Control Portrait*/
+        /*
         float accX = Gdx.input.getAccelerometerX();
         float accZ = Gdx.input.getAccelerometerZ();
         if(accX < -0.3f && player.b2body.getLinearVelocity().x <= 1)
@@ -145,17 +140,8 @@ public class PlayScreen implements Screen{
         if(accZ < 3.5f && player.b2body.getLinearVelocity().y >= -1)
             player.b2body.applyLinearImpulse(new Vector2(0, -realspeed), player.b2body.getWorldCenter(), true);
         else if( accZ > 4.5f && player.b2body.getLinearVelocity().y <= 1)
-            player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body.getWorldCenter(), true);
-
-        /* Auto slowing down */
-        if(player.b2body.getLinearVelocity().x > 0)
-            player.b2body.applyLinearImpulse(new Vector2(-0.1f,0),player.b2body.getWorldCenter(), true);
-        else if(player.b2body.getLinearVelocity().x < 0)
-            player.b2body.applyLinearImpulse(new Vector2(0.1f,0),player.b2body.getWorldCenter(), true);
-        if(player.b2body.getLinearVelocity().y > 0)
-            player.b2body.applyLinearImpulse(new Vector2(0,-0.1f),player.b2body.getWorldCenter(), true);
-        else if(player.b2body.getLinearVelocity().y < 0)
-            player.b2body.applyLinearImpulse(new Vector2(0,0.1f),player.b2body.getWorldCenter(), true);
+            player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body
+            .getWorldCenter(), true);*/
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP))
             player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body
@@ -229,27 +215,35 @@ public class PlayScreen implements Screen{
         hud.stage.draw();
     }
 
-    public void levelSuccess(int level)
+    public void levelSuccess()
     {
         Settings.loadPrefs();
         int highscore = hud.getWorldTimer();
         switch(level) {
             case 1:
-                if (highscore < Settings.hs_one)
-                    Settings.hs_one = highscore; break;
+                if (highscore < Settings.hs_one || Settings.hs_one == 0){
+                    Settings.hs_one = highscore;
+                }
+                break;
             case 2:
-                if (highscore < Settings.hs_two)
+                if (highscore < Settings.hs_two || Settings.hs_two == 0)
                     Settings.hs_two = highscore; break;
             case 3:
-                if (highscore < Settings.hs_three)
+                if (highscore < Settings.hs_three || Settings.hs_three == 0)
                     Settings.hs_three= highscore; break;
             case 4:
-                if (highscore < Settings.hs_four)
+                if (highscore < Settings.hs_four || Settings.hs_four == 0)
                     Settings.hs_four= highscore; break;
             default: System.out.println("Error when writing highscore"); break;
         }
         Settings.savePrefs();
+
+        reset();
         game.setScreen(new SelectScreen(game));
+    }
+
+    public void reset(){
+        hud.reset();
     }
 
     @Override

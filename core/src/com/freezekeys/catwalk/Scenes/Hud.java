@@ -28,11 +28,12 @@ public class Hud implements Disposable{
     private Label timeLabel;
     private Label speedLabel;
     private static Label speedCount;
-    public static float playerSpeed = 1f;
+    public static float playerSpeed;
 
     public Hud(SpriteBatch sb){
         worldTimer = 0;
         timeCount = 0;
+        playerSpeed = 1f;
 
         viewport = new FitViewport(Catwalk.V_WIDTH, Catwalk.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
@@ -66,6 +67,13 @@ public class Hud implements Disposable{
             countDownLabel.setText((String.format("%03d", worldTimer)));
             timeCount = 0;
         }
+    }
+
+    public void reset(){
+        worldTimer = 0;
+        timeCount = 0;
+        playerSpeed = 1f;
+        speedCount.setText(String.format("%03d", (int)(playerSpeed*100)));
     }
 
     public static void changeSpeed(float value){

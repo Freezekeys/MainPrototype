@@ -16,14 +16,23 @@ public class Settings {
 
 
     public static void savePrefs(){
-        saveData.putBoolean("sfx", sfxEnabled);
-        saveData.putBoolean("music", musicEnabled);
-        saveData.putBoolean("mute", muted);
-        saveData.putInteger("HS1", hs_one);
-        saveData.putInteger("HS2", hs_two);
-        saveData.putInteger("HS3", hs_three);
-        saveData.putInteger("HS4", hs_four);
+        savePreference("sfx", sfxEnabled);
+        savePreference("music", musicEnabled);
+        savePreference("mute", muted);
+        savePreference("HS1", Settings.hs_one);
+        savePreference("HS2", Settings.hs_two);
+        savePreference("HS3", Settings.hs_three);
+        savePreference("HS4", Settings.hs_four);
         saveData.flush();
+    }
+
+    public static void savePreference(String s, boolean value){
+        saveData.putBoolean(s, value);
+    }
+
+    public static void savePreference(String s, int value){
+        System.out.println("Saving the "+s + " to "+value);
+        saveData.putInteger(s, value);
     }
 
     public static void loadPrefs(){

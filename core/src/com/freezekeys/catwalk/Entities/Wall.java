@@ -6,12 +6,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.freezekeys.catwalk.Catwalk;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Screens.PlayScreen;
+import com.freezekeys.catwalk.Screens.SelectScreen;
 
 /**
  * Created by xrans on 3/16/2016.
  */
 public class Wall extends Interactive{
-
     public Wall(PlayScreen screen, Rectangle rect) {
         super(screen, rect);
         fixture.setUserData(this);
