@@ -27,7 +27,7 @@ public class Powerup extends Interactive{
     @Override
     public void onBodyHit() {
         Gdx.app.log("Power-Up", "Collision");
-        Hud.changeSpeed(0.01f);
+        Hud.changeSpeed(0.05f);
         setCategoryFilter(Catwalk.DESTROYED_BIT);
         getCell().setTile(null);
         Catwalk.manager.get("audio/sound/catwalk_pickup.wav", Sound.class).play();

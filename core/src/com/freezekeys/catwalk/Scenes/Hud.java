@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.freezekeys.catwalk.Catwalk;
-import com.sun.media.jfxmediaimpl.MediaDisposer;
 
 /**
  * Created by xrans on 3/6/2016.

@@ -21,7 +21,6 @@ import com.freezekeys.catwalk.Entities.Dog;
 import com.freezekeys.catwalk.Entities.Player;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Tools.B2WorldCreator;
-import com.freezekeys.catwalk.Tools.Settings;
 import com.freezekeys.catwalk.Tools.WorldContactListener;
 
 /**
@@ -47,6 +46,7 @@ public class PlayScreen implements Screen{
     private TextureAtlas atlas;
 
     private B2WorldCreator creator;
+    private boolean gamePaused = false;
 
 
     public PlayScreen(Catwalk game){
@@ -75,6 +75,7 @@ public class PlayScreen implements Screen{
         }
 
         map = mapLoader.load("./level/testLevelClosed.tmx");
+        map = mapLoader.load("./level/level2.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1 / Catwalk.PPM);
 
         /* sets the initial position of a gamecam */
@@ -116,39 +117,6 @@ public class PlayScreen implements Screen{
         float realspeed = speed + Hud.playerSpeed*2;
 
         /* Motion controls */
-        if(Gdx.input.isKeyPressed(Input.Keys.UP) && player.b2body.getLinearVelocity().y <= 1)
-            player.b2body.applyLinearImpulse(new Vector2(0, 0.5f), player.b2body.getWorldCenter(), true);
-        else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.b2body.getLinearVelocity().y >= -1)
-            player.b2body.applyLinearImpulse(new Vector2(0, -0.5f), player.b2body.getWorldCenter(), true);
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 1)
-            player.b2body.applyLinearImpulse(new Vector2(0.5f, 0), player.b2body.getWorldCenter(), true);
-        else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -1)
-            player.b2body.applyLinearImpulse(new Vector2(-0.5f,0), player.b2body.getWorldCenter(), true);
-
-        /* If player is moving, play this shit */
-        if(!player.b2body.getLinearVelocity().isZero() && Settings.sfxEnabled) Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
-
-                /* Gyro Control Portrait*/
-        float accX = Gdx.input.getAccelerometerX();
-        float accZ = Gdx.input.getAccelerometerZ();
-        if(accX < -0.3f && player.b2body.getLinearVelocity().x <= 1)
-            player.b2body.applyLinearImpulse(new Vector2(1f, 0), player.b2body.getWorldCenter(), true);
-        else if(accX > 0.3f && player.b2body.getLinearVelocity().x >= -1)
-            player.b2body.applyLinearImpulse(new Vector2(-1f, 0), player.b2body.getWorldCenter(), true);
-        if(accZ < 3.5f && player.b2body.getLinearVelocity().y >= -1)
-            player.b2body.applyLinearImpulse(new Vector2(0, -0.5f), player.b2body.getWorldCenter(), true);
-        else if( accZ > 4.5f && player.b2body.getLinearVelocity().y <= 1)
-            player.b2body.applyLinearImpulse(new Vector2(0, 0.5f), player.b2body.getWorldCenter(), true);
-
-        /* Auto slowing down */
-        if(player.b2body.getLinearVelocity().x > 0)
-            player.b2body.applyLinearImpulse(new Vector2(-0.1f,0),player.b2body.getWorldCenter(), true);
-        else if(player.b2body.getLinearVelocity().x < 0)
-            player.b2body.applyLinearImpulse(new Vector2(0.1f,0),player.b2body.getWorldCenter(), true);
-        if(player.b2body.getLinearVelocity().y > 0)
-            player.b2body.applyLinearImpulse(new Vector2(0,-0.1f),player.b2body.getWorldCenter(), true);
-        else if(player.b2body.getLinearVelocity().y < 0)
-            player.b2body.applyLinearImpulse(new Vector2(0,0.1f),player.b2body.getWorldCenter(), true);
         if(Gdx.input.isKeyPressed(Input.Keys.UP))
             player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body
                     .getWorldCenter()
@@ -166,8 +134,6 @@ public class PlayScreen implements Screen{
             player.b2body.applyLinearImpulse(new Vector2(-realspeed, 0), player.b2body
                     .getWorldCenter()
                     , true);
-
-        System.out.println(dt);
 
         /* If player is moving, play this shit - need fix */
         if(!player.b2body.getLinearVelocity().isZero() && dt%0.01f == 1){
@@ -197,7 +163,10 @@ public class PlayScreen implements Screen{
     /* Main screen rendering method */
     @Override
     public void render(float delta) {
-        update(delta);
+        if(!gamePaused) {
+            update(delta);
+        }
+
         Gdx.gl.glClearColor(0, 0, 0, 1); //sets the background color too
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -229,7 +198,7 @@ public class PlayScreen implements Screen{
     public void pause() {
 
     }
-
+        gamePaused = true;
     @Override
     public void resume() {
 
@@ -250,6 +219,10 @@ public class PlayScreen implements Screen{
 
     public B2WorldCreator getCreator(){
         return creator;
+    }
+
+    public Catwalk getGame(){
+        return game;
     }
 
     @Override
