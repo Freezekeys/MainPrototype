@@ -80,18 +80,15 @@ public class SelectScreen implements Screen {
                 return;
             }
             if (two.contains(touch.x, touch.y)){
-                System.out.println("hit2");
                 game.setScreen(new PlayScreen(game, 2));
                 return;
             }
             if (three.contains(touch.x, touch.y)){
                 game.setScreen(new PlayScreen(game, 3));
-                System.out.println("hit3");
                 return;
             }
             if (four.contains(touch.x, touch.y)){
                 game.setScreen(new PlayScreen(game, 4));
-                System.out.println("hit4");
                 return;
             }
         }

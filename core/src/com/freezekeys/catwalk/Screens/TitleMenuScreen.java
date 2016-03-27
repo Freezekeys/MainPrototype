@@ -68,14 +68,12 @@ public class TitleMenuScreen implements Screen {
     public void update(){
         if (Gdx.input.justTouched()) {
             menucam.unproject(touch.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-            System.out.println("Touched");
 
             if (levelselection.contains(touch.x, touch.y)) {
                 game.setScreen(new SelectScreen(game));
                 return;
             }
             if (settings.contains(touch.x, touch.y)) {
-                System.out.println("ToSettings");
                 game.setScreen(new SettingsScreen(game));
                 return;
             }

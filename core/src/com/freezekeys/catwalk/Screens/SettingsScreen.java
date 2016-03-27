@@ -26,7 +26,6 @@ public class SettingsScreen implements Screen{
 
     public SettingsScreen (Catwalk game) {
         this.game = game;
-        System.out.println("InSettings");
         settingscam = new OrthographicCamera(Catwalk.V_WIDTH, Catwalk.V_HEIGHT);
         settingscam.position.set(Catwalk.V_WIDTH / 2, Catwalk.V_HEIGHT / 2, 0);
         sfx = new Rectangle((Catwalk.V_WIDTH / 2) -75, (Catwalk.V_HEIGHT / 2) -45 , 200, 60);

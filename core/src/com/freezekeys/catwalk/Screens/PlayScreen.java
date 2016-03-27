@@ -135,13 +135,13 @@ public class PlayScreen implements Screen{
         float accX = Gdx.input.getAccelerometerX();
         float accZ = Gdx.input.getAccelerometerZ();
         if(accX < -0.3f && player.b2body.getLinearVelocity().x <= 1)
-            player.b2body.applyLinearImpulse(new Vector2(1f, 0), player.b2body.getWorldCenter(), true);
+            player.b2body.applyLinearImpulse(new Vector2(realspeed, 0), player.b2body.getWorldCenter(), true);
         else if(accX > 0.3f && player.b2body.getLinearVelocity().x >= -1)
-            player.b2body.applyLinearImpulse(new Vector2(-1f, 0), player.b2body.getWorldCenter(), true);
+            player.b2body.applyLinearImpulse(new Vector2(-realspeed, 0), player.b2body.getWorldCenter(), true);
         if(accZ < 3.5f && player.b2body.getLinearVelocity().y >= -1)
-            player.b2body.applyLinearImpulse(new Vector2(0, -0.5f), player.b2body.getWorldCenter(), true);
+            player.b2body.applyLinearImpulse(new Vector2(0, -realspeed), player.b2body.getWorldCenter(), true);
         else if( accZ > 4.5f && player.b2body.getLinearVelocity().y <= 1)
-            player.b2body.applyLinearImpulse(new Vector2(0, 0.5f), player.b2body.getWorldCenter(), true);
+            player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body.getWorldCenter(), true);
 
         /* Auto slowing down */
         if(player.b2body.getLinearVelocity().x > 0)
@@ -152,6 +152,7 @@ public class PlayScreen implements Screen{
             player.b2body.applyLinearImpulse(new Vector2(0,-0.1f),player.b2body.getWorldCenter(), true);
         else if(player.b2body.getLinearVelocity().y < 0)
             player.b2body.applyLinearImpulse(new Vector2(0,0.1f),player.b2body.getWorldCenter(), true);
+
         if(Gdx.input.isKeyPressed(Input.Keys.UP))
             player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body
                     .getWorldCenter()
@@ -173,14 +174,14 @@ public class PlayScreen implements Screen{
         System.out.println(dt);
 
         /* If player is moving, play this shit - need fix */
-        if(!player.b2body.getLinearVelocity().isZero() && dt%0.01f == 1){
+        if(!player.b2body.getLinearVelocity().isZero() && dt%0.01f == 1 && Settings.sfxEnabled){
             Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
         }
 
         //gamecam.position.y += 100/Catwalk.PPM * dt; //gamecam moves on its own
 
         if(player.getY() > gamePort.getWorldHeight()/2 && player.getY() < 36.2f)
-            gamecam.position.y = player.getY(); //gamecam moves with player
+            gamecam.position.y = player.getY() + 1; //gamecam moves with player
     }
 
     /* Simple update method, each frame it executes everything below */
@@ -243,7 +244,7 @@ public class PlayScreen implements Screen{
             default: System.out.println("Error when writing highscore"); break;
         }
         Settings.savePrefs();
-        game.setScreen(new TitleMenuScreen(game));
+        game.setScreen(new SelectScreen(game));
     }
 
     @Override
