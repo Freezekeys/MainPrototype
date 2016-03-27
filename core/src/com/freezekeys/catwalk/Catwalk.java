@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.freezekeys.catwalk.Screens.PlayScreen;
+import com.freezekeys.catwalk.Screens.TitleMenuScreen;
 
 import java.util.Random;
 
@@ -54,6 +55,7 @@ public class Catwalk extends Game {
 	}
 
 		setScreen(new TitleMenuScreen(this));
+<<<<<<< HEAD
 		setScreen(new PlayScreen(this));
 	public static Music getMusicForLevel(){
 		switch(new Random().nextInt(3)){
@@ -67,6 +69,8 @@ public class Catwalk extends Game {
 				return manager.get("audio/music/catwalk_music4.mp3", Music.class);
 		}
 		return null;
+=======
+>>>>>>> origin/ScreenPlayerControl
 	}
 
 	@Override

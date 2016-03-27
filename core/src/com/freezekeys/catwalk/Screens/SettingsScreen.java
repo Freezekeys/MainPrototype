@@ -52,6 +52,7 @@ public class SettingsScreen implements Screen{
         game.batch.end();
         game.batch.enableBlending();
         game.batch.begin();
+        Settings.loadPrefs();
         if (Settings.musicEnabled)
         {
             Texture musicPaw = new Texture("paw.png");
@@ -80,6 +81,7 @@ public class SettingsScreen implements Screen{
                 }
                 if ((Settings.musicEnabled || Settings.sfxEnabled) == false)
                     Settings.muted = true;
+                Settings.savePrefs();
                 return;
             }
             if (sfx.contains(touch.x, touch.y)) {
@@ -91,10 +93,18 @@ public class SettingsScreen implements Screen{
                 }
                 if ((Settings.musicEnabled || Settings.sfxEnabled) == false)
                     Settings.muted = true;
+                Settings.savePrefs();
                 return;
             }
             if (back.contains(touch.x, touch.y)){
                 game.setScreen(new TitleMenuScreen(game));
+                return;
+            }
+
+            if (gamecache.contains(touch.x, touch.y))
+            {
+                Settings.wipeCache();
+                System.out.println("Wiped, yo!");
                 return;
             }
         }
