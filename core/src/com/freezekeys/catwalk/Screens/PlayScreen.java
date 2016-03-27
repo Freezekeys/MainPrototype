@@ -21,7 +21,6 @@ import com.freezekeys.catwalk.Entities.Dog;
 import com.freezekeys.catwalk.Entities.Player;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Tools.B2WorldCreator;
-import com.freezekeys.catwalk.Tools.Settings;
 import com.freezekeys.catwalk.Tools.WorldContactListener;
 
 /**
@@ -47,6 +46,7 @@ public class PlayScreen implements Screen{
     private TextureAtlas atlas;
 
     private B2WorldCreator creator;
+    private boolean gamePaused = false;
 
 
     public PlayScreen(Catwalk game, int level){
@@ -77,7 +77,12 @@ public class PlayScreen implements Screen{
             default: System.out.println("Error when choosing level"); break;
         }
 
+<<<<<<< HEAD
+        map = mapLoader.load("./level/testLevelClosed.tmx");
+        map = mapLoader.load("./level/level2.tmx");
+=======
         //map = mapLoader.load("level/testLevelClosed.tmx");
+>>>>>>> origin/ScreenPlayerControl
         renderer = new OrthogonalTiledMapRenderer(map, 1 / Catwalk.PPM);
 
         /* sets the initial position of a gamecam */
@@ -119,6 +124,8 @@ public class PlayScreen implements Screen{
         float realspeed = speed + Hud.playerSpeed*2;
 
         /* Motion controls */
+<<<<<<< HEAD
+=======
         if(Gdx.input.isKeyPressed(Input.Keys.UP) && player.b2body.getLinearVelocity().y <= 1)
             player.b2body.applyLinearImpulse(new Vector2(0, 0.5f), player.b2body.getWorldCenter(), true);
         else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) && player.b2body.getLinearVelocity().y >= -1)
@@ -152,7 +159,11 @@ public class PlayScreen implements Screen{
             player.b2body.applyLinearImpulse(new Vector2(0,-0.1f),player.b2body.getWorldCenter(), true);
         else if(player.b2body.getLinearVelocity().y < 0)
             player.b2body.applyLinearImpulse(new Vector2(0,0.1f),player.b2body.getWorldCenter(), true);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/ScreenPlayerControl
+>>>>>>> origin/ScreenPlayerControl
         if(Gdx.input.isKeyPressed(Input.Keys.UP))
             player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body
                     .getWorldCenter()
@@ -170,8 +181,6 @@ public class PlayScreen implements Screen{
             player.b2body.applyLinearImpulse(new Vector2(-realspeed, 0), player.b2body
                     .getWorldCenter()
                     , true);
-
-        System.out.println(dt);
 
         /* If player is moving, play this shit - need fix */
         if(!player.b2body.getLinearVelocity().isZero() && dt%0.01f == 1 && Settings.sfxEnabled){
@@ -201,7 +210,10 @@ public class PlayScreen implements Screen{
     /* Main screen rendering method */
     @Override
     public void render(float delta) {
-        update(delta);
+        if(!gamePaused) {
+            update(delta);
+        }
+
         Gdx.gl.glClearColor(0, 0, 0, 1); //sets the background color too
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -256,7 +268,7 @@ public class PlayScreen implements Screen{
     public void pause() {
 
     }
-
+        gamePaused = true;
     @Override
     public void resume() {
 
@@ -277,6 +289,10 @@ public class PlayScreen implements Screen{
 
     public B2WorldCreator getCreator(){
         return creator;
+    }
+
+    public Catwalk getGame(){
+        return game;
     }
 
     @Override
