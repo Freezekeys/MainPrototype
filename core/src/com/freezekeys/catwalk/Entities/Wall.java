@@ -7,6 +7,7 @@ import com.freezekeys.catwalk.Catwalk;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Screens.PlayScreen;
 import com.freezekeys.catwalk.Screens.SelectScreen;
+import com.freezekeys.catwalk.Tools.Settings;
 
 /**
  * Created by xrans on 3/16/2016.
@@ -21,6 +22,7 @@ public class Wall extends Interactive{
     @Override
     public void onHeadHit() {
         Hud.changeSpeed(-0.15f);
+        if(Settings.sfxEnabled)
         Catwalk.manager.get("audio/sound/catwalk_meow.wav", Sound.class).play();
     }
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.freezekeys.catwalk.Screens.PlayScreen;
 import com.freezekeys.catwalk.Screens.TitleMenuScreen;
+import com.freezekeys.catwalk.Tools.Settings;
 
 import java.util.Random;
 
@@ -32,12 +33,29 @@ public class Catwalk extends Game {
 
 	/* For loading audio files */
 	public static AssetManager manager;
+
+	private Music menuMusic;
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
         createMusicAsset();
 		setScreen(new TitleMenuScreen(this));
+
+		if(Settings.musicEnabled) {
+			menuMusic = manager.get("audio/music/catwalk_music.ogg", Music.class);
+			menuMusic.setLooping(true);
+			menuMusic().play();
+		}
+	}
+
+	public Music menuMusic(){
+		return menuMusic;
+	}
+
+	public void playMusic(){
+		if(Settings.sfxEnabled)
+			menuMusic().play();
 	}
 
 	public void createMusicAsset(){
