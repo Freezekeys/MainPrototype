@@ -36,7 +36,7 @@ public class Hud implements Disposable{
     public Hud(SpriteBatch sb){
         worldTimer = 0;
         timeCount = 0;
-        playerSpeed = 1f;
+        playerSpeed = 0.4f;
 
         viewport = new FitViewport(Catwalk.V_WIDTH, Catwalk.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
@@ -48,7 +48,7 @@ public class Hud implements Disposable{
         countDownLabel = new Label(String.format("#03d",worldTimer),new Label.LabelStyle(new BitmapFont(), Color.YELLOW));
         timeLabel = new Label("TIME",new Label.LabelStyle(new BitmapFont(), Color.YELLOW));
         speedLabel = new Label("SPEED",new Label.LabelStyle(new BitmapFont(), Color.YELLOW));
-        speedCount = new Label(String.format("%03d",(int)(playerSpeed*100)),new Label.LabelStyle
+        speedCount = new Label(String.format("%03d",(int)((playerSpeed + 0.6) *100)),new Label.LabelStyle
                 (new
                 BitmapFont(),
                 Color.YELLOW));
@@ -85,7 +85,7 @@ public class Hud implements Disposable{
         worldTimer = 0;
         timeCount = 0;
         playerSpeed = 1f;
-        speedCount.setText(String.format("%03d", (int)(playerSpeed*100)));
+        speedCount.setText(String.format("%03d", (int)((playerSpeed+0.6)*100)));
     }
 
     public void setGameOverMessage(String message, boolean win){
@@ -94,11 +94,11 @@ public class Hud implements Disposable{
     }
 
     public static void changeSpeed(float value){
-        if((playerSpeed - value) < 0)
+        if((playerSpeed + value) < 0)
             playerSpeed = 0;
         else playerSpeed += value;
 
-        speedCount.setText(String.format("%03d", (int)(playerSpeed*100)));
+        speedCount.setText(String.format("%03d", (int)((playerSpeed+0.6)*100)));
     }
 
     public Integer getWorldTimer()

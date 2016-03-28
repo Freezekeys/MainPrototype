@@ -126,10 +126,10 @@ public class PlayScreen implements Screen{
         return enemies;
     }
 
-    private float speed = 0.3f;
+    private float speed = 0.6f;
     /* Process input from player */
     public void handleInput(float dt){
-        float realspeed = speed + Hud.playerSpeed*2;
+        float realspeed = speed  + Hud.playerSpeed*2;
 
                 /* Gyro Control Portrait*/
         float accX = Gdx.input.getAccelerometerX();
@@ -200,6 +200,7 @@ public class PlayScreen implements Screen{
     public void quitToMenu(){
         reset();
         game.setScreen(new SelectScreen(game));
+        game.playMusic();
     }
 
     /* Simple update method, each frame it executes everything below */
@@ -239,7 +240,7 @@ public class PlayScreen implements Screen{
         renderer.render();
 
         // debug lines, will be removed for release
-        b2dr.render(world, gamecam.combined);
+        //b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
