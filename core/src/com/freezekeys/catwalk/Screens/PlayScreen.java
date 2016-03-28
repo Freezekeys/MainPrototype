@@ -101,6 +101,7 @@ public class PlayScreen implements Screen{
 
         /* Music setup, sets the music file (that is already loaded) looping continously */
         if ( Settings.musicEnabled) {
+            game.menuMusic().stop();
             music = game.getMusicForLevel();
             music.setLooping(true);
             music.play(); //Sets the music loop playing
