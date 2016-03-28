@@ -5,7 +5,9 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.freezekeys.catwalk.Entities.Enemy;
 import com.freezekeys.catwalk.Entities.Interactive;
+import com.freezekeys.catwalk.Entities.Player;
 
 /**
  * Created by xrans on 3/23/2016.
@@ -26,6 +28,9 @@ public class WorldContactListener implements ContactListener {
             Fixture object = head == fixA ? fixB : fixA;
             if(object.getUserData() instanceof Interactive){
                 ((Interactive)  object.getUserData()).onBodyHit();
+            }
+            if(object.getUserData() instanceof Enemy){
+                ((Enemy)  object.getUserData()).onBodyHit();
             }
         }
     }

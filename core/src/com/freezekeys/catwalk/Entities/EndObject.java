@@ -19,7 +19,6 @@ public class EndObject extends Interactive{
 
     @Override
     public void onHeadHit() {
-        Gdx.app.log("End:","You have finished the level!");
         screen.levelSuccess();
     }
 

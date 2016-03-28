@@ -31,7 +31,6 @@ public class Settings {
     }
 
     public static void savePreference(String s, int value){
-        System.out.println("Saving the "+s + " to "+value);
         saveData.putInteger(s, value);
     }
 

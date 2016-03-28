@@ -27,6 +27,9 @@ public class Hud implements Disposable{
     private Label countDownLabel;
     private Label timeLabel;
     private Label speedLabel;
+    private Label messageLabel;
+    private Label pressKeyLabel;
+
     private static Label speedCount;
     public static float playerSpeed;
 
@@ -49,15 +52,24 @@ public class Hud implements Disposable{
                 (new
                 BitmapFont(),
                 Color.YELLOW));
+        messageLabel = new Label("",new Label.LabelStyle(new BitmapFont(), Color.RED));
+        pressKeyLabel = new Label("",new Label.LabelStyle(new BitmapFont(), Color.RED));
 
         table.add(speedLabel).expandX().padTop(10);
         table.add(timeLabel).expandX().padTop(10);
-
         table.row();
         table.add(speedCount).expandX();
         table.add(countDownLabel).expandX();
 
+        Table centerTable = new Table();
+        centerTable.center();
+        centerTable.setFillParent(true);
+        centerTable.add(messageLabel).expandX();
+        centerTable.row();
+        centerTable.add(pressKeyLabel).expandX();
+
         stage.addActor(table);
+        stage.addActor(centerTable);
     }
 
     public void update(float dt){
@@ -76,10 +88,16 @@ public class Hud implements Disposable{
         speedCount.setText(String.format("%03d", (int)(playerSpeed*100)));
     }
 
+    public void setGameOverMessage(String message, boolean win){
+        messageLabel.setText(message);
+        pressKeyLabel.setText("Touch the screen..");
+    }
+
     public static void changeSpeed(float value){
         if((playerSpeed - value) < 0)
             playerSpeed = 0;
-        else playerSpeed += value ;
+        else playerSpeed += value;
+
         speedCount.setText(String.format("%03d", (int)(playerSpeed*100)));
     }
 
@@ -87,6 +105,7 @@ public class Hud implements Disposable{
     {
         return worldTimer;
     }
+
     @Override
     public void dispose() {
         stage.dispose();

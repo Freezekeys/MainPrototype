@@ -2,6 +2,7 @@ package com.freezekeys.catwalk.Entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
+import com.freezekeys.catwalk.Misc;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Screens.PlayScreen;
 import com.freezekeys.catwalk.Screens.SelectScreen;
@@ -24,8 +25,6 @@ public class Water extends Interactive{
 
     @Override
     public void onBodyHit() {
-        Gdx.app.log("Water", "Collision with water, you drowned - ha ha ha.");
-        s.reset();
-        s.getGame().setScreen(new SelectScreen(s.getGame()));
+        s.gameOver(Misc.STATUS_DROWNED, !Misc.WIN);
     }
 }

@@ -20,8 +20,7 @@ public class Wall extends Interactive{
 
     @Override
     public void onHeadHit() {
-        Gdx.app.log("Wall","Collision");
-        Hud.changeSpeed(-0.01f);
+        Hud.changeSpeed(-0.1f);
         Catwalk.manager.get("audio/sound/catwalk_meow.wav", Sound.class).play();
     }
 

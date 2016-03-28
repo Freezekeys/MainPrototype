@@ -14,7 +14,7 @@ public class Catwalk extends Game {
 	public SpriteBatch batch;
 
 	/* Declaration of screen properties, from here they are used everywhere else */
-	public static final int V_WIDTH=208;
+	public static final int V_WIDTH=192;
 	public static final int V_HEIGHT=400;
 
 	public static final short GROUND_BIT = 1;
@@ -43,14 +43,15 @@ public class Catwalk extends Game {
 	public void createMusicAsset(){
 		manager = new AssetManager();
 		manager.load("audio/music/catwalk_music.ogg",Music.class);
-		manager.load("audio/music/catwalk_music2.mp3",Music.class);
-		manager.load("audio/music/catwalk_music3.mp3",Music.class);
-		manager.load("audio/music/catwalk_music4.mp3",Music.class);
+		manager.load("audio/music/catwalk_music1.wav",Music.class);
+		manager.load("audio/music/catwalk_music2.wav",Music.class);
+		manager.load("audio/music/catwalk_music3.wav",Music.class);
 
 		manager.load("audio/sound/catwalk_run.ogg", Sound.class);
 		manager.load("audio/sound/catwalk_pickup.wav", Sound.class);
 		manager.load("audio/sound/catwalk_meow.wav", Sound.class);
 		manager.load("audio/sound/catwalk_purr.wav", Sound.class);
+		manager.load("audio/sound/catwalk_wilhelm.wav", Sound.class);
 		manager.finishLoading(); //Can be done asynchronous
 	}
 
@@ -60,11 +61,11 @@ public class Catwalk extends Game {
 			case 0:
 				return manager.get("audio/music/catwalk_music.ogg", Music.class);
 			case 1:
-				return manager.get("audio/music/catwalk_music2.mp3", Music.class);
+				return manager.get("audio/music/catwalk_music1.wav", Music.class);
 			case 2:
-				return manager.get("audio/music/catwalk_music3.mp3", Music.class);
+				return manager.get("audio/music/catwalk_music2.wav", Music.class);
 			case 3:
-				return manager.get("audio/music/catwalk_music4.mp3", Music.class);
+				return manager.get("audio/music/catwalk_music3.wav", Music.class);
 		}
 		return null;
 
@@ -75,10 +76,6 @@ public class Catwalk extends Game {
 		super.render();
 
 	}
-
-    public void gameOver(){
-        this.pause();
-    }
 
     public void endGame(){
         this.pause();

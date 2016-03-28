@@ -14,11 +14,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.freezekeys.catwalk.Catwalk;
-import com.freezekeys.catwalk.Entities.Dog;
+import com.freezekeys.catwalk.Entities.Enemy;
 import com.freezekeys.catwalk.Entities.Player;
+import com.freezekeys.catwalk.Misc;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Tools.B2WorldCreator;
 import com.freezekeys.catwalk.Tools.Settings;
@@ -41,7 +43,6 @@ public class PlayScreen implements Screen{
     private Box2DDebugRenderer b2dr;
 
     private Player player;
-    private Dog dog;
 
     private Music music;
     private TextureAtlas atlas;
@@ -49,6 +50,8 @@ public class PlayScreen implements Screen{
     private B2WorldCreator creator;
     private boolean gamePaused = false;
     private int level;
+
+    private Array<Enemy> enemies;
 
 
     public PlayScreen(Catwalk game, int level){
@@ -72,7 +75,7 @@ public class PlayScreen implements Screen{
         /* Load our map and setup a map renderer */
         mapLoader = new TmxMapLoader();
         switch(level) {
-            case 1: map = mapLoader.load("level/testLevelClosed.tmx"); break;
+            case 1: map = mapLoader.load("level/level1.tmx"); break;
             case 2: map = mapLoader.load("level/level2.tmx"); break;
             case 3: map = mapLoader.load("level/level3.tmx"); break;
             case 4: map = mapLoader.load("level/level4.tmx"); break;
@@ -90,18 +93,20 @@ public class PlayScreen implements Screen{
         world = new World(new Vector2(0,-1/Catwalk.PPM),true);
         b2dr = new Box2DDebugRenderer();
 
+        /* initialize array of enemy objects */
+        enemies = new Array<Enemy>();
+
         /* create world and player */
         creator = new B2WorldCreator(this);
 
         /* Music setup, sets the music file (that is already loaded) looping continously */
         if ( Settings.musicEnabled) {
-            music = Catwalk.manager.get("audio/music/catwalk_music.ogg", Music.class);
+            music = game.getMusicForLevel();
             music.setLooping(true);
             music.play(); //Sets the music loop playing
         }
 
         player = new Player(this);
-        dog = new Dog(this, .32f, .32f);
 
 
         /* creates a collision detector */
@@ -117,8 +122,8 @@ public class PlayScreen implements Screen{
 
     }
 
-    public int getLevel() {
-        return level;
+    public Array<Enemy> getEnemies() {
+        return enemies;
     }
 
     private float speed = 0.3f;
@@ -172,25 +177,63 @@ public class PlayScreen implements Screen{
             gamecam.position.y = player.getY() + 1; //gamecam moves with player
     }
 
+    public void updateEnemies(float dt){
+        for (Enemy e : getEnemies()) {
+            e.update(dt);
+        }
+    }
+
+    public void renderEnemies(){
+        for (Enemy e : getEnemies()) {
+            e.draw(game.batch);
+        }
+    }
+
+
+    private boolean gameOver = false;
+
+    public void gameOver(String message, boolean win){
+        gameOver = true;
+        hud.setGameOverMessage(message, win);
+        if(Settings.musicEnabled) music.stop();
+        if(Settings.sfxEnabled)
+            if(win) Catwalk.manager.get("audio/sound/catwalk_purr.wav", Sound.class).play();
+            else  Catwalk.manager.get("audio/sound/catwalk_wilhelm.wav", Sound.class).play();
+    }
+
+    public void quitToMenu(){
+        reset();
+        game.setScreen(new SelectScreen(game));
+    }
+
     /* Simple update method, each frame it executes everything below */
     public void update(float dt){
         handleInput(dt);
 
         world.step(1 / 60f, 6, 2); //collision calculation precision, higher number - more precision.
         player.update(dt);
-        dog.update(dt);
+
+        updateEnemies(dt);
         hud.update(dt);
         gamecam.update();
 
         renderer.setView(gamecam);
-        player.b2body.setLinearVelocity(new Vector2(0,0));
+        player.b2body.setLinearVelocity(new Vector2(0, 0));
+    }
+
+    public void updateGameOver(){
+        if(Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isTouched()){
+            quitToMenu();
+        }
     }
 
     /* Main screen rendering method */
     @Override
     public void render(float delta) {
-        if(!gamePaused) {
+        if(!gameOver) {
             update(delta);
+        }else{
+            updateGameOver();
         }
 
         Gdx.gl.glClearColor(0, 0, 0, 1); //sets the background color too
@@ -200,13 +243,13 @@ public class PlayScreen implements Screen{
         renderer.render();
 
         // debug lines, will be removed for release
-        //b2dr.render(world, gamecam.combined);
+        b2dr.render(world, gamecam.combined);
 
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
 
         player.draw(game.batch);
-        dog.draw(game.batch);
+        renderEnemies();
 
         game.batch.end();
 
@@ -238,8 +281,7 @@ public class PlayScreen implements Screen{
         }
         Settings.savePrefs();
 
-        reset();
-        game.setScreen(new SelectScreen(game));
+        gameOver(Misc.STATUS_WIN, Misc.WIN);
     }
 
     public void reset(){

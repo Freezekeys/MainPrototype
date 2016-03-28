@@ -1,5 +1,6 @@
 package com.freezekeys.catwalk.Entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -80,7 +81,8 @@ public class Player extends Sprite {
         shape.setRadius(5 / Catwalk.PPM);
 
         fdef.filter.categoryBits = Catwalk.CAT_BIT;
-        fdef.filter.maskBits = Catwalk.GROUND_BIT | Catwalk.POWERUP_BIT | Catwalk.WALL_BIT | Catwalk.END_BIT;
+        fdef.filter.maskBits = Catwalk.GROUND_BIT | Catwalk.POWERUP_BIT | Catwalk.WALL_BIT |
+                Catwalk.END_BIT | Catwalk.ENEMY_BIT;
 
         fdef.shape = shape;
 

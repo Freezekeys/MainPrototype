@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.freezekeys.catwalk.Catwalk;
 import com.freezekeys.catwalk.Scenes.Hud;
 import com.freezekeys.catwalk.Screens.PlayScreen;
+import com.freezekeys.catwalk.Tools.Settings;
 
 
 /**
@@ -26,10 +27,10 @@ public class Powerup extends Interactive{
 
     @Override
     public void onBodyHit() {
-        Gdx.app.log("Power-Up", "Collision");
-        Hud.changeSpeed(0.05f);
+        Hud.changeSpeed(0.07f);
         setCategoryFilter(Catwalk.DESTROYED_BIT);
         getCell().setTile(null);
-        Catwalk.manager.get("audio/sound/catwalk_pickup.wav", Sound.class).play();
+        if(Settings.sfxEnabled) Catwalk.manager.get("audio/sound/catwalk_pickup.wav", Sound
+                .class).play();
     }
 }

@@ -20,9 +20,10 @@ import com.freezekeys.catwalk.Screens.PlayScreen;
  */
 public abstract class Interactive {
     protected Fixture fixture;
+    protected Body body;
     protected World world;
     protected TiledMap map;
-    protected Body body;
+
     protected PlayScreen screen;
 
 
@@ -46,6 +47,7 @@ public abstract class Interactive {
     }
 
     public abstract void onHeadHit();
+
     public abstract void onBodyHit();
 
     public void setCategoryFilter(short filterBit){

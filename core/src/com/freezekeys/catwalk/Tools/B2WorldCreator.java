@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.freezekeys.catwalk.Catwalk;
+import com.freezekeys.catwalk.Entities.Dog;
 import com.freezekeys.catwalk.Entities.EndObject;
 import com.freezekeys.catwalk.Entities.Powerup;
 import com.freezekeys.catwalk.Entities.Wall;
@@ -24,8 +25,10 @@ import com.freezekeys.catwalk.Screens.PlayScreen;
 public class B2WorldCreator {
 
     private Vector2 levelStart;
+    private PlayScreen screen;
 
     public B2WorldCreator(PlayScreen screen) {
+        this.screen = screen;
         World world = screen.getWorld();
         TiledMap map = screen.getMap();
         levelStart = new Vector2(0,0);
@@ -55,7 +58,6 @@ public class B2WorldCreator {
                 .class)){
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             new Powerup(screen, rect);
-            Gdx.app.log("Creator"," Creating power-up");
         }
 
         //walls object, collision boxes
@@ -63,7 +65,6 @@ public class B2WorldCreator {
                 .class)){
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             new Wall(screen,rect);
-            Gdx.app.log("Creator"," Creating walls");
         }
 
         //water object, collision boxes
@@ -71,14 +72,20 @@ public class B2WorldCreator {
                 .class)){
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             new Water(screen,rect);
-            Gdx.app.log("Creator", " Creating water surface");
         }
         //end object, collision boxes
         for(MapObject object : map.getLayers().get(8).getObjects().getByType(RectangleMapObject
                 .class)){
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
             new EndObject(screen,rect);
-            Gdx.app.log("Creator", " Creating end objects");
+        }
+
+
+        //dog object, collision boxes
+        for(MapObject object : map.getLayers().get(9).getObjects().getByType(RectangleMapObject
+                .class)){
+            Rectangle rect = ((RectangleMapObject) object).getRectangle();
+            screen.getEnemies().add(new Dog(screen, rect));
         }
 
         /* Get level start */
