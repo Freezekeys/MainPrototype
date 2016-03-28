@@ -84,12 +84,14 @@ public class TitleMenuScreen implements Screen {
                     Settings.musicEnabled = true;
                     Settings.sfxEnabled = true;
                     Settings.muted = false;
+                    game.playMusic();
                 }
                 else
                 {
                     Settings.musicEnabled = false;
                     Settings.sfxEnabled = false;
                     Settings.muted = true;
+                    game.menuMusic().stop();
                 }
                 Settings.savePrefs();
                 return;

@@ -41,10 +41,11 @@ public class Catwalk extends Game {
 		batch = new SpriteBatch();
         createMusicAsset();
 		setScreen(new TitleMenuScreen(this));
+		Settings.loadPrefs();
+		menuMusic = manager.get("audio/music/catwalk_music.ogg", Music.class);
+		menuMusic.setLooping(true);
 
 		if(Settings.musicEnabled) {
-			menuMusic = manager.get("audio/music/catwalk_music.ogg", Music.class);
-			menuMusic.setLooping(true);
 			menuMusic().play();
 		}
 	}
@@ -54,7 +55,7 @@ public class Catwalk extends Game {
 	}
 
 	public void playMusic(){
-		if(Settings.sfxEnabled)
+		if(Settings.musicEnabled)
 			menuMusic().play();
 	}
 
@@ -62,7 +63,6 @@ public class Catwalk extends Game {
 		manager = new AssetManager();
 		manager.load("audio/music/catwalk_music.ogg",Music.class);
 		manager.load("audio/music/catwalk_music1.wav",Music.class);
-		manager.load("audio/music/catwalk_music2.wav",Music.class);
 		manager.load("audio/music/catwalk_music3.wav",Music.class);
 
 		manager.load("audio/sound/catwalk_run.ogg", Sound.class);
@@ -81,8 +81,6 @@ public class Catwalk extends Game {
 			case 1:
 				return manager.get("audio/music/catwalk_music1.wav", Music.class);
 			case 2:
-				return manager.get("audio/music/catwalk_music2.wav", Music.class);
-			case 3:
 				return manager.get("audio/music/catwalk_music3.wav", Music.class);
 		}
 		return null;

@@ -73,10 +73,12 @@ public class SettingsScreen implements Screen{
 
             if (music.contains(touch.x, touch.y)) {
                 if (Settings.musicEnabled)
-                    Settings.musicEnabled = false;
+                {Settings.musicEnabled = false;
+                game.menuMusic().stop();}
                 else {
                     Settings.musicEnabled = true;
                     Settings.muted = false;
+                    game.playMusic();
                 }
                 if ((Settings.musicEnabled || Settings.sfxEnabled) == false)
                     Settings.muted = true;
