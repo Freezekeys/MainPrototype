@@ -1,33 +1,37 @@
 package com.freezekeys.catwalk.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.freezekeys.catwalk.Catwalk;
+import com.freezekeys.catwalk.Entities.Enemy;
+import com.freezekeys.catwalk.Entities.Player;
+import com.freezekeys.catwalk.Misc;
 import com.freezekeys.catwalk.Scenes.Hud;
+import com.freezekeys.catwalk.Tools.B2WorldCreator;
+import com.freezekeys.catwalk.Tools.Settings;
+import com.freezekeys.catwalk.Tools.WorldContactListener;
 
 /**
  * Created by xrans on 3/6/2016.
  */
 public class PlayScreen implements Screen{
     private Catwalk game;
-    private FitViewport gamePort;
+    private StretchViewport gamePort;
     private OrthographicCamera gamecam;
     private Hud hud;
 
@@ -38,74 +42,80 @@ public class PlayScreen implements Screen{
     private World world;
     private Box2DDebugRenderer b2dr;
 
+    private Player player;
 
-    public PlayScreen(Catwalk game){
+    private Music music;
+    private TextureAtlas atlas;
+
+    private B2WorldCreator creator;
+    private boolean gamePaused = false;
+    private int level;
+
+    private Array<Enemy> enemies;
+
+
+    public PlayScreen(Catwalk game, int level){
+        atlas = new TextureAtlas("catdog.atlas");
+        this.level = level;
+        /* create main instance of the game */
         this.game = game;
 
-        gamecam = new OrthographicCamera();
-        gamePort = new FitViewport(400,300,gamecam);
-        hud = new Hud(game.batch);
-        mapLoader = new TmxMapLoader();
-        map = mapLoader.load("./level/testLevel.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map);
-        gamecam.position.set(gamePort.getScreenWidth()/2+96, gamePort.getScreenHeight()/2+250,0);
+        /*Load Preferences*/
+        Settings.loadPrefs();
 
-        world = new World(new Vector2(0,0),true);
+        /* create cam used to scroll vertically */
+        gamecam = new OrthographicCamera();
+        /* create a FitViewport to maintain virtual aspect ratio  */
+        gamePort = new StretchViewport(Catwalk.V_WIDTH/Catwalk.PPM,Catwalk.V_HEIGHT/Catwalk.PPM,
+                gamecam);
+
+        /* create a game HUD for score and timer */
+        hud = new Hud(game.batch);
+
+        /* Load our map and setup a map renderer */
+        mapLoader = new TmxMapLoader();
+        switch(level) {
+            case 1: map = mapLoader.load("level/level1.tmx"); break;
+            case 2: map = mapLoader.load("level/level2.tmx"); break;
+            case 3: map = mapLoader.load("level/level3.tmx"); break;
+            case 4: map = mapLoader.load("level/level4.tmx"); break;
+            default: System.out.println("Error when choosing level"); break;
+        }
+
+
+        //map = mapLoader.load("level/testLevelClosed.tmx");
+
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / Catwalk.PPM);
+
+        /* sets the initial position of a gamecam */
+        gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight()/2, 0);
+
+        world = new World(new Vector2(0,-1/Catwalk.PPM),true);
         b2dr = new Box2DDebugRenderer();
 
-        BodyDef bdef = new BodyDef();
-        PolygonShape shape = new PolygonShape();
-        FixtureDef fdef = new FixtureDef();
-        Body body;
+        /* initialize array of enemy objects */
+        enemies = new Array<Enemy>();
 
-        //mapboundary object, collision boxes
-        for(MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)){
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth()/2, rect.getY() + rect.getHeight()/2);
+        /* create world and player */
+        creator = new B2WorldCreator(this);
 
-            body = world.createBody(bdef);
-            shape.setAsBox(rect.getWidth()/2, rect.getHeight()/2);
-            fdef.shape = shape;
-            body.createFixture(fdef);
+        /* Music setup, sets the music file (that is already loaded) looping continously */
+        if ( Settings.musicEnabled) {
+            game.menuMusic().stop();
+            music = game.getMusicForLevel();
+            music.setLooping(true);
+            music.play(); //Sets the music loop playing
         }
 
-        //powerups object, collision boxes
-        for(MapObject object : map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)){
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth()/2, rect.getY() + rect.getHeight()/2);
+        player = new Player(this);
 
-            body = world.createBody(bdef);
-            shape.setAsBox(rect.getWidth()/2, rect.getHeight()/2);
-            fdef.shape = shape;
-            body.createFixture(fdef);
-        }
 
-        //walls object, collision boxes
-        for(MapObject object : map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)){
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth()/2, rect.getY() + rect.getHeight()/2);
+        /* creates a collision detector */
+        world.setContactListener(new WorldContactListener());
+    }
 
-            body = world.createBody(bdef);
-            shape.setAsBox(rect.getWidth()/2, rect.getHeight()/2);
-            fdef.shape = shape;
-            body.createFixture(fdef);
-        }
-
-        //water object, collision boxes
-        for(MapObject object : map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)){
-            Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            bdef.type = BodyDef.BodyType.StaticBody;
-            bdef.position.set(rect.getX() + rect.getWidth()/2, rect.getY() + rect.getHeight()/2);
-
-            body = world.createBody(bdef);
-            shape.setAsBox(rect.getWidth()/2, rect.getHeight()/2);
-            fdef.shape = shape;
-            body.createFixture(fdef);
-        }
-
+    public TextureAtlas getAtlas() {
+        return atlas;
     }
 
     @Override
@@ -113,43 +123,177 @@ public class PlayScreen implements Screen{
 
     }
 
-    // Process input from player, hold down mouse, screen speeds up
+    public Array<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    private float speed = 0.6f;
+    /* Process input from player */
     public void handleInput(float dt){
-        gamecam.position.y += 100 * dt;
-        if(Gdx.input.isTouched()){
-            gamecam.position.y += 100 * dt;
+        float realspeed = speed  + Hud.playerSpeed*2;
+
+                /* Gyro Control Portrait*/
+        float accX = Gdx.input.getAccelerometerX();
+        float accZ = Gdx.input.getAccelerometerZ();
+        if(accX < -0.3f && player.b2body.getLinearVelocity().x <= 1)
+            player.b2body.applyLinearImpulse(new Vector2(realspeed, 0), player.b2body.getWorldCenter(), true);
+        else if(accX > 0.3f && player.b2body.getLinearVelocity().x >= -1)
+            player.b2body.applyLinearImpulse(new Vector2(-realspeed, 0), player.b2body.getWorldCenter(), true);
+        if(accZ < 3.5f && player.b2body.getLinearVelocity().y >= -1)
+            player.b2body.applyLinearImpulse(new Vector2(0, -realspeed), player.b2body.getWorldCenter(), true);
+        else if( accZ > 4.5f && player.b2body.getLinearVelocity().y <= 1)
+            player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body
+            .getWorldCenter(), true);
+
+        if(Gdx.input.isKeyPressed(Input.Keys.UP))
+            player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body
+                    .getWorldCenter()
+                    , true);
+        else if(Gdx.input.isKeyPressed(Input.Keys.DOWN))
+            player.b2body.applyLinearImpulse(new Vector2(0, -realspeed), player.b2body
+                    .getWorldCenter
+                            (), true);
+
+         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+            player.b2body.applyLinearImpulse(new Vector2(realspeed, 0), player
+                    .b2body.getWorldCenter()
+                    , true);
+        else if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
+            player.b2body.applyLinearImpulse(new Vector2(-realspeed, 0), player.b2body
+                    .getWorldCenter()
+                    , true);
+
+        /* If player is moving, play this shit - need fix */
+        if(!player.b2body.getLinearVelocity().isZero() && dt%0.01f == 1 && Settings.sfxEnabled){
+            Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
+        }
+
+        //gamecam.position.y += 100/Catwalk.PPM * dt; //gamecam moves on its own
+
+        if(player.getY() > gamePort.getWorldHeight()/2 && player.getY() < 36.2f)
+            gamecam.position.y = player.getY() + 1; //gamecam moves with player
+    }
+
+    public void updateEnemies(float dt){
+        for (Enemy e : getEnemies()) {
+            e.update(dt);
         }
     }
 
-    public void update(float dt){
-        handleInput(dt);
-        gamecam.update();
-        renderer.setView(gamecam);
+    public void renderEnemies(){
+        for (Enemy e : getEnemies()) {
+            e.draw(game.batch);
+        }
     }
 
-    //Main screen rendering method
+
+    private boolean gameOver = false;
+
+    public void gameOver(String message, boolean win){
+        gameOver = true;
+        hud.setGameOverMessage(message, win);
+        if(Settings.musicEnabled) music.stop();
+        if(Settings.sfxEnabled)
+            if(win) Catwalk.manager.get("audio/sound/catwalk_purr.wav", Sound.class).play();
+            else  Catwalk.manager.get("audio/sound/catwalk_wilhelm.wav", Sound.class).play();
+    }
+
+    public void quitToMenu(){
+        reset();
+        game.setScreen(new SelectScreen(game));
+        game.playMusic();
+    }
+
+    /* Simple update method, each frame it executes everything below */
+    public void update(float dt){
+        handleInput(dt);
+
+        world.step(1 / 60f, 6, 2); //collision calculation precision, higher number - more precision.
+        player.update(dt);
+
+        updateEnemies(dt);
+        hud.update(dt);
+        gamecam.update();
+
+        renderer.setView(gamecam);
+        player.b2body.setLinearVelocity(new Vector2(0, 0));
+    }
+
+    public void updateGameOver(){
+        if(Gdx.input.isKeyPressed(Input.Keys.ENTER) || Gdx.input.isTouched()){
+            quitToMenu();
+        }
+    }
+
+    /* Main screen rendering method */
     @Override
     public void render(float delta) {
-        update(delta);
-        Gdx.gl.glClearColor(1,0,0,1);
+        if(!gameOver) {
+            update(delta);
+        }else{
+            updateGameOver();
+        }
+
+        Gdx.gl.glClearColor(0, 0, 0, 1); //sets the background color too
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // render game map
         renderer.render();
 
-        b2dr.render(world,gamecam.combined);
+        // debug lines, will be removed for release
+        //b2dr.render(world, gamecam.combined);
+
+        game.batch.setProjectionMatrix(gamecam.combined);
+        game.batch.begin();
+
+        player.draw(game.batch);
+        renderEnemies();
+
+        game.batch.end();
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+
         hud.stage.draw();
+    }
+
+    public void levelSuccess()
+    {
+        Settings.loadPrefs();
+        int highscore = hud.getWorldTimer();
+        switch(level) {
+            case 1:
+                if (highscore < Settings.hs_one || Settings.hs_one == 0){
+                    Settings.hs_one = highscore;
+                }
+                break;
+            case 2:
+                if (highscore < Settings.hs_two || Settings.hs_two == 0)
+                    Settings.hs_two = highscore; break;
+            case 3:
+                if (highscore < Settings.hs_three || Settings.hs_three == 0)
+                    Settings.hs_three= highscore; break;
+            case 4:
+                if (highscore < Settings.hs_four || Settings.hs_four == 0)
+                    Settings.hs_four= highscore; break;
+            default: System.out.println("Error when writing highscore"); break;
+        }
+        Settings.savePrefs();
+
+        gameOver(Misc.STATUS_WIN, Misc.WIN);
+    }
+
+    public void reset(){
+        hud.reset();
     }
 
     @Override
     public void resize(int width, int height) {
-
-        gamePort.update(width,height);
+        gamePort.update(width, height);
     }
 
     @Override
     public void pause() {
-
+        gamePaused = true;
     }
 
     @Override
@@ -162,8 +306,28 @@ public class PlayScreen implements Screen{
 
     }
 
+    public TiledMap getMap(){
+        return map;
+    }
+
+    public World getWorld(){
+        return world;
+    }
+
+    public B2WorldCreator getCreator(){
+        return creator;
+    }
+
+    public Catwalk getGame(){
+        return game;
+    }
+
     @Override
     public void dispose() {
-
+        map.dispose();
+        renderer.dispose();
+        world.dispose();
+        b2dr.dispose();
+        hud.dispose();
     }
 }
