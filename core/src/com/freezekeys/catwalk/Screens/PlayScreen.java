@@ -130,12 +130,8 @@ public class PlayScreen implements Screen{
     /* Process input from player */
     public void handleInput(float dt){
         float realspeed = speed + Hud.playerSpeed*2;
-        /* Motion controls */
-        /* If player is moving, play this shit */
-        //if(!player.b2body.getLinearVelocity().isZero() && Settings.sfxEnabled) Catwalk.manager.get("audio/sound/catwalk_run.ogg", Sound.class).play();
 
                 /* Gyro Control Portrait*/
-        /*
         float accX = Gdx.input.getAccelerometerX();
         float accZ = Gdx.input.getAccelerometerZ();
         if(accX < -0.3f && player.b2body.getLinearVelocity().x <= 1)
@@ -146,7 +142,7 @@ public class PlayScreen implements Screen{
             player.b2body.applyLinearImpulse(new Vector2(0, -realspeed), player.b2body.getWorldCenter(), true);
         else if( accZ > 4.5f && player.b2body.getLinearVelocity().y <= 1)
             player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body
-            .getWorldCenter(), true);*/
+            .getWorldCenter(), true);
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP))
             player.b2body.applyLinearImpulse(new Vector2(0, realspeed), player.b2body

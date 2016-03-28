@@ -20,7 +20,7 @@ public class Wall extends Interactive{
 
     @Override
     public void onHeadHit() {
-        Hud.changeSpeed(-0.1f);
+        Hud.changeSpeed(-0.15f);
         Catwalk.manager.get("audio/sound/catwalk_meow.wav", Sound.class).play();
     }
 
